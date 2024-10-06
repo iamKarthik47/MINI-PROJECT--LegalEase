@@ -1,0 +1,219 @@
+{#<!DOCTYPE html>#}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalEase - The Ultimate Advocate Office Management System</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* Add CSS styles for the hero banner */
+        .hero {
+            position: relative;
+            height: 100vh; /* Full viewport height */
+            background-image: url("{% static 'images/lawyers-meeting.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .hero-content {
+            z-index: 1; /* Ensures text is on top of the image */
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 0.3rem;
+            font-size: 1.2rem;
+        }
+
+        .cta-button:hover {
+            background-color: #0056b3;
+        }
+        .contact {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Full viewport height */
+        text-align: center;
+    }
+
+    .contact ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .contact li {
+        margin: 10px 0;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">LegalEase</div>
+        <nav>
+            <a href="#home">Home</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Streamline Your Legal Practice</h1>
+                <p>LegalEase - The Ultimate Advocate Office Management System</p>
+                <a href="{% url 'login' %}" class="cta-button">Get Started</a>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Comprehensive Features for Advocates</h2>
+            <div class="feature-grid">
+                <div class="feature-image">
+                    <img src="{% static 'images/mse.jpg' %}" alt="Lawyers in a meeting">
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-briefcase"></i>
+                        <h3>Case Management</h3>
+                        <p>Organize and manage cases efficiently with a centralized system.</p>
+                    </div>
+                    <div class="feature-item active">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Document Management</h3>
+                        <p>Store and retrieve legal documents securely and effortlessly.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <h3>Client Scheduling</h3>
+                        <p>Easily manage client appointments and schedules.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Performance Analytics</h3>
+                        <p>Gain insights into your practice's performance and efficiency.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="why-choose" class="why-choose">
+            <h2>Why Choose LegalEase?</h2>
+            <div class="reasons-grid">
+                <div class="reasons-list">
+                    <div class="reason-item">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <h3>Increase Productivity</h3>
+                        <p>Automate routine tasks and keep your focus on what matters most—serving your clients.</p>
+                    </div>
+                    <div class="reason-item">
+                        <i class="fas fa-lock"></i>
+                        <h3>Secure Document Management</h3>
+                        <p>Keep all your legal documents organized, secure, and accessible from anywhere.</p>
+                    </div>
+                    <div class="reason-item">
+                        <i class="fas fa-user-friends"></i>
+                        <h3>User-Friendly Interface</h3>
+                        <p>Easy to navigate and designed with legal professionals in mind.</p>
+                    </div>
+                    <div class="reason-item">
+                        <i class="fas fa-cogs"></i>
+                        <h3>Customizable Workflows</h3>
+                        <p>Adapt the system to suit your practice's unique needs.</p>
+                    </div>
+                </div>
+                <div class="reasons-image">
+                    <img src="{% static 'images/lsk.jpg' %}" alt="Lawyer working at desk">
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="testimonials">
+            <h2>What Our Users Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-item">
+                    <p>"LegalEase has transformed the way we manage our legal practice. It's intuitive, efficient, and indispensable."</p>
+                    <h4>- Sarah Johnson, Attorney at Law</h4>
+                </div>
+                <div class="testimonial-item">
+                    <p>"The case management features have streamlined our workflow tremendously. Highly recommended!"</p>
+                    <h4>- Michael Chang, Legal Consultant</h4>
+                </div>
+                <div class="testimonial-item">
+                    <p>"LegaEase's document management system is top-notch. It's secure, organized, and saves us countless hours."</p>
+                    <h4>- Emily Rodriguez, Paralegal</h4>
+                </div>
+            </div>
+        </section>
+
+{#        <section id="contact" class="contact">#}
+{#            <h2>Get In Touch</h2>#}
+{#            <form>#}
+{#                <input type="text" placeholder="Your Name" required>#}
+{#                <input type="email" placeholder="Your Email" required>#}
+{#                <textarea placeholder="Your Message" required></textarea>#}
+{#                <button type="submit" class="btn btn-primary">Send Message</button>#}
+{#            </form>#}
+{#        </section>#}
+        <section id="contact" class="contact">
+    <h2>Contact Details</h2>
+    <p>LegalEase</p>
+    <ul>
+        <li><strong>Office Address:</strong> 123 LegalEase Ave, Lawtown, LT 45678</li>
+        <li><strong>Phone:</strong> +91 234 567 890</li>
+        <li><strong>Email:</strong> contact@legalease.com</li>
+        <li><strong>Business Hours:</strong> Mon - Fri, 9 AM - 6 PM</li>
+    </ul>
+</section>
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About LegaEase</h3>
+                <p>LegalEase is the ultimate solution for legal professionals seeking to streamline their practice management.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#why-choose">Why Choose Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 LegalEase. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

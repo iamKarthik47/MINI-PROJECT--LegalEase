@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Advocate Office Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #fbbf24;
+            --bg-dark: #0f172a;
+            --text-light: #f8fafc;
+            --card-bg: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            100% { left: 100%; }
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .dashboard-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            animation: cardPulse 2s infinite alternate;
+        }
+
+        @keyframes cardPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 80%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .dashboard-card h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+
+        .dashboard-card p {
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: var(--bg-dark);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .sidebar {
+            display: grid;
+            gap: 20px;
+        }
+
+        .sidebar-item {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .sidebar-item:hover::before {
+            transform: translateX(100%);
+        }
+
+        .sidebar-item h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .sidebar-item p {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .sidebar-item:nth-child(1) { --item-color: #fbbf24; }
+        .sidebar-item:nth-child(2) { --item-color: #4ade80; }
+        .sidebar-item:nth-child(3) { --item-color: #3b82f6; }
+        .sidebar-item:nth-child(4) { --item-color: #ef4444; }
+        .sidebar-item:nth-child(5) { --item-color: #8b5cf6; }
+        .sidebar-item:nth-child(6) { --item-color: #f97316; }
+        .sidebar-item:nth-child(7) { --item-color: #14b8a6; }
+
+        .sidebar-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: var(--item-color);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s;
+        }
+
+        .sidebar-item:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--bg-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .profile-picture:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">User Dashboard</div>
+            <div class="profile-picture">JD</div>
+        </header>
+        <div class="main-content">
+            <div class="dashboard-card">
+                <h2>Welcome to Your Dashboard</h2>
+                <p>Manage your legal matters and communicate with your advocate effortlessly.</p>
+                <a href="#" class="btn">Get Started</a>
+            </div>
+            <div class="sidebar">
+                <a href="{% url 'bookAd' %}" class="sidebar-item">
+                    <h3>Book Advocates</h3>
+                    <p>Schedule appointments with expert advocates</p>
+                </a>
+                <a href="{% url 'booking_status' %}" class="sidebar-item">
+                    <h3>Booking Status</h3>
+                    <p>Track your appointment schedules</p>
+                </a>
+                <div class="sidebar-item">
+                    <h3>Case Details</h3>
+                    <p>Access information about your ongoing legal matters</p>
+                </div>
+                <div class="sidebar-item">
+                    <h3>Chat</h3>
+                    <p>Communicate securely with your advocate</p>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div class="sidebar-item">
+                    <h3>Notifications</h3>
+                    <p>Stay updated on important case developments</p>
+                    <span class="notification-badge">5</span>
+                </div>
+                <div class="sidebar-item">
+                    <h3>Profile</h3>
+                    <p>Manage your account settings and information</p>
+                </div>
+                <div class="sidebar-item">
+                    <h3>Logout</h3>
+                    <p>Securely sign out of your account</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

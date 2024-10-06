@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Advanced Case Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Add your existing styles here */
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #00bcd4;
+            --accent-color: #ffc107;
+            --background-color: #f5f5f5;
+            --text-color: #212121;
+            --border-color: #e0e0e0;
+            --error-color: #f44336;
+            --success-color: #4caf50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .search-bar {
+            display: flex;
+            margin: 40px 0;
+        }
+
+        .search-bar input {
+            flex-grow: 1;
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 50px 0 0 50px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1) inset;
+        }
+
+        .search-bar button {
+            padding: 15px 30px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 0 50px 50px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: var(--primary-color);
+        }
+
+        .case-list {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .case-list table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .case-list th, .case-list td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .case-list th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .case-list tr:last-child td {
+            border-bottom: none;
+        }
+
+        .case-list tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .case-list tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        .add-case-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .add-case-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 40px;
+            border: 1px solid #888;
+            width: 70%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(0, 188, 212, 0.25);
+            outline: none;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .error {
+            color: var(--error-color);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            margin: 0 5px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .view-modal .modal-content {
+            max-width: 900px;
+        }
+
+        .view-modal table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .view-modal th, .view-modal td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .view-modal th {
+            font-weight: bold;
+            width: 30%;
+            color: var(--primary-color);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .modal-content {
+                width: 90%;
+                padding: 20px;
+            }
+
+            .case-list th, .case-list td {
+                padding: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Case Management</h1>
+    </header>
+
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Search cases by number, client name, or type...">
+            <button><i class="fas fa-search"></i> Search</button>
+        </div>
+
+        <div class="case-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Case Number</th>
+                        <th>Client Name</th>
+                        <th>Case Type</th>
+                        <th>Filing Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for case in cases %}
+                    <tr>
+                        <td>{{ case.case_number }}</td>
+                        <td>{{ case.client_name }}</td>
+                        <td>{{ case.case_type }}</td>
+                        <td>{{ case.filing_date }}</td>
+                        <td>
+                            <button class="action-btn view-btn" data-case="{{ case.id }}"><i class="fas fa-eye"></i></button>
+                            <button class="action-btn edit-btn" data-case="{{ case.id }}"><i class="fas fa-edit"></i></button>
+                                                        <button class="action-btn delete-btn" data-case="{{ case.id }}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <a href="#" class="add-case-btn" id="addCaseBtn"><i class="fas fa-plus"></i> Add New Case</a>
+
+        <div id="addCaseModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Add New Case</h2>
+                <form id="addCaseForm" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="caseNumber">Case Number</label>
+                        <input type="text" id="caseNumber" name="caseNumber" required pattern="C\d{3}" title="Case number must be in the format C001, C002, etc.">
+                        <span class="error" id="caseNumberError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="clientName">Client Name</label>
+                        <input type="text" id="clientName" name="clientName" required pattern="[A-Za-z\s]+" title="Client name should only contain letters and spaces">
+                        <span class="error" id="clientNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="caseType">Case Type</label>
+                        <select id="caseType" name="caseType" required>
+                            <option value="">Select Case Type</option>
+                            <option value="civil">Civil</option>
+                            <option value="criminal">Criminal</option>
+                            <option value="family">Family</option>
+                            <option value="corporate">Corporate</option>
+                        </select>
+                        <span class="error" id="caseTypeError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="filingDate">Filing Date</label>
+                        <input type="date" id="filingDate" name="filingDate" required>
+                        <span class="error" id="filingDateError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="courtName">Court Name</label>
+                        <input type="text" id="courtName" name="courtName" required>
+                        <span class="error" id="courtNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="judgeAssigned">Judge Assigned</label>
+                        <input type="text" id="judgeAssigned" name="judgeAssigned">
+                    </div>
+                    <div class="form-group">
+                        <label for="opposingCounsel">Opposing Counsel</label>
+                        <input type="text" id="opposingCounsel" name="opposingCounsel">
+                    </div>
+                    <div class="form-group">
+                        <label for="caseStatus">Case Status</label>
+                        <select id="caseStatus" name="caseStatus" required>
+                            <option value="">Select Status</option>
+                            <option value="open">Open</option>
+                            <option value="pending">Pending</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <span class="error" id="caseStatusError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="caseDescription">Case Description</label>
+                        <textarea id="caseDescription" name="caseDescription" required></textarea>
+                        <span class="error" id="caseDescriptionError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="evidenceList">Evidence List</label>
+                        <textarea id="evidenceList" name="evidenceList"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="witnessInformation">Witness Information</label>
+                        <textarea id="witnessInformation" name="witnessInformation"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="nextHearingDate">Next Hearing Date</label>
+                        <input type="date" id="nextHearingDate" name="nextHearingDate">
+                        <span class="error" id="nextHearingDateError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="user">Client</label>
+                        <select id="user" name="user" required>
+                            <option value="">Select Client</option>
+                            {% for user in users %}
+                            <option value="{{ user.id }}">{{ user.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="error" id="userError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="advocate">Advocate</label>
+                        <select id="advocate" name="advocate" required>
+                            <option value="">Select Advocate</option>
+                            {% for advocate in advocates %}
+                            <option value="{{ advocate.id }}">{{ advocate.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="error" id="advocateError"></span>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Case</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="viewCaseModal" class="modal view-modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>View Case Details</h2>
+                <table id="viewCaseTable">
+                    <!-- Case details will be populated here -->
+                </table>
+            </div>
+        </div>
+
+        <div id="editCaseModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Edit Case</h2>
+                <form id="editCaseForm" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="editCaseNumber">Case Number</label>
+                        <input type="text" id="editCaseNumber" name="editCaseNumber" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="editClientName">Client Name</label>
+                        <input type="text" id="editClientName" name="editClientName" required pattern="[A-Za-z\s]+" title="Client name should only contain letters and spaces">
+                        <span class="error" id="editClientNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCaseType">Case Type</label>
+                        <select id="editCaseType" name="editCaseType" required>
+                            <option value="">Select Case Type</option>
+                            <option value="civil">Civil</option>
+                            <option value="criminal">Criminal</option>
+                            <option value="family">Family</option>
+                            <option value="corporate">Corporate</option>
+                        </select>
+                        <span class="error" id="editCaseTypeError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editFilingDate">Filing Date</label>
+                        <input type="date" id="editFilingDate" name="editFilingDate" required>
+                        <span class="error" id="editFilingDateError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCourtName">Court Name</label>
+                        <input type="text" id="editCourtName" name="editCourtName" required>
+                        <span class="error" id="editCourtNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editJudgeAssigned">Judge Assigned</label>
+                        <input type="text" id="editJudgeAssigned" name="editJudgeAssigned">
+                    </div>
+                    <div class="form-group">
+                        <label for="editOpposingCounsel">Opposing Counsel</label>
+                        <input type="text" id="editOpposingCounsel" name="editOpposingCounsel">
+                    </div>
+                    <div class="form-group">
+                        <label for="editCaseStatus">Case Status</label>
+                        <select id="editCaseStatus" name="editCaseStatus" required>
+                            <option value="">Select Status</option>
+                            <option value="open">Open</option>
+                            <option value="pending">Pending</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <span class="error" id="editCaseStatusError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCaseDescription">Case Description</label>
+                        <textarea id="editCaseDescription" name="editCaseDescription" required></textarea>
+                        <span class="error" id="editCaseDescriptionError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEvidenceList">Evidence List</label>
+                        <textarea id="editEvidenceList" name="editEvidenceList"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editWitnessInformation">Witness Information</label>
+                        <textarea id="editWitnessInformation" name="editWitnessInformation"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editNextHearingDate">Next Hearing Date</label>
+                        <input type="date" id="editNextHearingDate" name="editNextHearingDate">
+                        <span class="error" id="editNextHearingDateError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editUser">Client</label>
+                        <select id="editUser" name="editUser" required>
+                            <option value="">Select Client</option>
+                            {% for user in users %}
+                            <option value="{{ user.id }}">{{ user.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="error" id="editUserError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAdvocate">Advocate</label>
+                        <select id="editAdvocate" name="editAdvocate" required>
+                            <option value="">Select Advocate</option>
+                            {% for advocate in advocates %}
+                            <option value="{{ advocate.id }}">{{ advocate.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="error" id="editAdvocateError"></span>
+                    </div>
+                    <button type="submit" class="submit-btn">Update Case</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function setupModal(modalId, btnId) {
+            var modal = document.getElementById(modalId);
+            var btn = document.getElementById(btnId);
+            var span = modal.getElementsByClassName("close")[0];
+
+            if (btn) {
+                btn.onclick = function() {
+                    modal.style.display = "block";
+                }
+            }
+
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        }
+
+        setupModal("addCaseModal", "addCaseBtn");
+        setupModal("viewCaseModal", "viewCaseBtn");
+        setupModal("editCaseModal", "editCaseBtn");
+
+        // Form validation
+        document.getElementById("addCaseForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            if (validateForm()) {
+                addCase();
+            }
+        });
+
+        function validateForm() {
+            var isValid = true;
+            var fields = ["caseNumber", "clientName", "caseType", "filingDate", "courtName", "caseStatus", "caseDescription", "user", "advocate"];
+
+            fields.forEach(function(field) {
+                var element = document.getElementById(field);
+                var errorElement = document.getElementById(field + "Error");
+
+                if (!element.checkValidity()) {
+                    isValid = false;
+                    errorElement.textContent = element.validationMessage;
+                } else {
+                    errorElement.textContent = "";
+                }
+            });
+
+            // Additional custom validations
+            var filingDate = new Date(document.getElementById("filingDate").value);
+            var nextHearingDate = new Date(document.getElementById("nextHearingDate").value);
+
+            if (nextHearingDate < filingDate) {
+                isValid = false;
+                document.getElementById("nextHearingDateError").textContent = "Next hearing date cannot be earlier than the filing date.";
+            } else {
+                document.getElementById("nextHearingDateError").textContent = "";
+            }
+
+            return isValid;
+        }
+
+        function addCase() {
+            var form = document.getElementById("addCaseForm");
+            var formData = new FormData(form);
+
+            fetch("{% url 'add_case' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert("Case added successfully!");
+                    form.reset();
+                    document.getElementById("addCaseModal").style.display = "none";
+                    location.reload();
+                } else {
+                    alert("Error adding case.");
+                }
+            });
+        }
+
+        // View case functionality
+        document.querySelectorAll('.view-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                var caseId = this.getAttribute('data-case');
+                viewCase(caseId);
+            });
+        });
+
+        function viewCase(caseId) {
+            fetch(`{% url 'view_case' 0 %}`.replace('0', caseId))
+            .then(response => response.json())
+            .then(data => {
+                var table = document.getElementById("viewCaseTable");
+                table.innerHTML = "";
+
+                for (var key in data) {
+                    var row = table.insertRow();
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    cell1.innerHTML = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim();
+                    cell2.innerHTML = data[key];
+                }
+
+                document.getElementById("viewCaseModal").style.display = "block";
+            });
+        }
+
+        // Edit case functionality
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                var caseId = this.getAttribute('data-case');
+                editCase(caseId);
+            });
+        });
+
+        function editCase(caseId) {
+            fetch(`{% url 'view_case' 0 %}`.replace('0', caseId))
+            .then(response => response.json())
+            .then(data => {
+                var form = document.getElementById("editCaseForm");
+
+                for (var key in data) {
+                    var input = form.querySelector("#edit" + key.charAt(0).toUpperCase() + key.slice(1));
+                    if (input) {
+                        input.value = data[key];
+                    }
+                }
+
+                // Set the selected user and advocate
+                var userSelect = document.getElementById("editUser");
+                var advocateSelect = document.getElementById("editAdvocate");
+                userSelect.value = data.user;
+                advocateSelect.value = data.advocate;
+
+                document.getElementById("editCaseModal").style.display = "block";
+            });
+        }
+
+        document.getElementById("editCaseForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            var form = document.getElementById("editCaseForm");
+            var formData = new FormData(form);
+            var caseId = form.querySelector("#editCaseNumber").value;
+
+            fetch(`{% url 'edit_case' 0 %}`.replace('0', caseId), {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                                        alert("Case updated successfully!");
+                    form.reset();
+                    document.getElementById("editCaseModal").style.display = "none";
+                    location.reload();
+                } else {
+                    alert("Error updating case.");
+                }
+            });
+        });
+
+        // Delete case functionality
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                var caseId = this.getAttribute('data-case');
+                deleteCase(caseId);
+            });
+        });
+
+        function deleteCase(caseId) {
+            if (confirm("Are you sure you want to delete case " + caseId + "?")) {
+                fetch(`{% url 'delete_case' 0 %}`.replace('0', caseId), {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert("Case deleted successfully!");
+                        location.reload();
+                    } else {
+                        alert("Error deleting case.");
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

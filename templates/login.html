@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalEase - Login/Register</title>
+    <style>
+        /* Existing CSS styles */
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700&display=swap');
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Raleway', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden; /* only hide horizontal overflow */
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh; /* allow the container to expand */
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+        }
+
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .left-panel h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(45deg, #f6d365 0%, #fda085 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .left-panel p {
+            font-size: 1.2rem;
+            text-align: center;
+            max-width: 80%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .right-panel {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-container {
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .form-container h2 {
+            color: #f6d365;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 1rem;
+            color: #fff;
+            border: none;
+            border-bottom: 2px solid #333;
+            outline: none;
+            background: transparent;
+            transition: 0.3s;
+            appearance: none;
+        }
+
+        .input-group select {
+            cursor: pointer;
+            background: transparent;
+            padding: 10px 0;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-group::after {
+            content: '▼';
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 10px 0;
+            font-size: 1rem;
+            color: #999;
+            pointer-events: none;
+            transition: 0.3s ease all;
+        }
+
+        .input-group input:focus ~ label,
+        .input-group input:valid ~ label,
+        .input-group select:focus ~ label,
+        .input-group select:valid ~ label {
+            top: -20px;
+            font-size: 0.8rem;
+            color: #f6d365;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            border-bottom: 2px solid #f6d365;
+        }
+
+        .input-group select option {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 10px;
+            border: none;
+        }
+
+        .input-group select option:hover {
+            background-color: #333;
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(45deg, #f6d365, #fda085);
+            border: none;
+            padding: 15px;
+            color: #000;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: all 0.4s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .links a {
+            color: #f6d365;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .links a:hover {
+            color: #fda085;
+        }
+
+        .floating-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translatey(0px); }
+            50% { transform: translatey(-20px); }
+            100% { transform: translatey(0px); }
+        }
+
+        .shape1 { top: 10%; left: 10%; width: 100px; height: 100px; border: 2px solid #f6d365; border-radius: 50%; }
+        .shape2 { top: 60%; right: 10%; width: 150px; height: 150px; border: 2px solid #fda085; transform: rotate(45deg); }
+        .shape3 { bottom: 10%; left: 30%; width: 80px; height: 80px; border: 2px solid #f6d365; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+
+        .form-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-toggle button {
+            background: transparent;
+            border: none;
+            color: #999;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .form-toggle button.active {
+            color: #f6d365;
+            border-bottom: 2px solid #f6d365;
+        }
+
+        #register-form {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="floating-shape shape1"></div>
+            <div class="floating-shape shape2"></div>
+            <div class="floating-shape shape3"></div>
+            <h1>LegalEase</h1>
+            <p>Elevating legal practice with cutting-edge technology</p>
+        </div>
+        <div class="right-panel">
+            <div class="form-container">
+                <div class="form-toggle">
+                    <button id="login-toggle" class="active">Login</button>
+                    <button id="register-toggle">Register</button>
+                </div>
+                <form id="login-form" method="post" action="">{% csrf_token %}
+                    <h2>Welcome Back</h2>
+                    {% if error_message %}
+                        <div style="color: red; margin-bottom: 1rem;">{{ error_message }}</div>
+                    {% endif %}
+                    <div class="input-group">
+                        <input type="email" name="username" required value="{{ form_data.username|default:'' }}" title="Enter a valid email address (e.g., example@example.com)">
+                        <label>Email</label>
+                        {% if field_errors.username %}
+                            <div style="color: red;">{{ field_errors.username }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <input type="password" name="password" required title="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.">
+                        <label>Password</label>
+                        {% if field_errors.password %}
+                            <div style="color: red;">{{ field_errors.password }}</div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" name="submit">LOGIN</button>
+                    <div class="links">
+                        <a href="#"></a>
+                    </div>
+                </form>
+
+                <form id="register-form" method="post" action="/reg" enctype="multipart/form-data">{% csrf_token %}
+                    <h2>Join Us</h2>
+                    {% if field_errors %}
+                        <div style="color: red; margin-bottom: 1rem;">Please correct the errors below:</div>
+                    {% endif %}
+                    <div class="input-group">
+                        <input type="text" name="name" required pattern="[A-Z a-z]{2,}" value="{{ form_data.name|default:'' }}" title="Enter your full name (only letters and spaces, at least 2 characters).">
+                        <label>Full Name</label>
+                        {% if field_errors.name %}
+                            <div style="color: red;">{{ field_errors.name }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <input type="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" value="{{ form_data.email|default:'' }}" title="Enter a valid email address (e.g., example@example.com).">
+                        <label>Email</label>
+                        {% if field_errors.email %}
+                            <div style="color: red;">{{ field_errors.email }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="place" required value="{{ form_data.place|default:'' }}" title="Enter your place of residence.">
+                        <label>Place</label>
+                        {% if field_errors.place %}
+                            <div style="color: red;">{{ field_errors.place }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="pin" required pattern="[0-9]{6}" value="{{ form_data.pin|default:'' }}" title="Enter a 6-digit PIN code.">
+                        <label>Pin</label>
+                        {% if field_errors.pin %}
+                            <div style="color: red;">{{ field_errors.pin }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <input type="text" name="phone" required pattern="[6789][0-9]{9}" value="{{ form_data.phone|default:'' }}" title="Enter a valid phone number (10 digits starting with 6, 7, 8, or 9).">
+                        <label>Phone</label>
+                        {% if field_errors.phone %}
+                            <div style="color: red;">{{ field_errors.phone }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <input type="file" name="image" accept=".jpg,.jpeg,.png" required title="Upload a profile image (JPG, JPEG, or PNG format).">
+                        <label>Image</label>
+                        {% if field_errors.image %}
+                            <div style="color: red;">{{ field_errors.image }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <select required name="gender" value="{{ form_data.gender|default:'' }}" title="Select your gender.">
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                        <label>Gender</label>
+                        {% if field_errors.gender %}
+                            <div style="color: red;">{{ field_errors.gender }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <select required name="type" id="role" onchange="toggleCategory()" value="{{ form_data.type|default:'' }}" title="Select your role (Client or Advocate).">
+                            <option value="" disabled selected>Select Role</option>
+                            <option value="user">Client</option>
+                            <option value="advocate">Advocate</option>
+                        </select>
+                        <label>Role</label>
+                        {% if field_errors.type %}
+                            <div style="color: red;">{{ field_errors.type }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group" id="categoryDiv">
+                        <select name="category" value="{{ form_data.category|default:'' }}" title="Select your category (Criminal or Family).">
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="criminal">Criminal</option>
+                            <option value="family">Family</option>
+                        </select>
+                        <label>Category</label>
+                        {% if field_errors.category %}
+                            <div style="color: red;">{{ field_errors.category }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="input-group">
+                        <input type="password" name="password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.">
+                        <label>Password</label>
+                        {% if field_errors.password %}
+                            <div style="color: red;">{{ field_errors.password }}</div>
+                        {% endif %}
+                    </div>
+                                        <div class="input-group">
+                        <input type="password" name="confirm" required title="Re-enter the password to confirm.">
+                        <label>Confirm Password</label>
+                        {% if field_errors.confirm %}
+                            <div style="color: red;">{{ field_errors.confirm }}</div>
+                        {% endif %}
+                    </div>
+                    <button type="submit">REGISTER</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const loginToggle = document.getElementById('login-toggle');
+        const registerToggle = document.getElementById('register-toggle');
+
+        loginToggle.addEventListener('click', () => {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+            loginToggle.classList.add('active');
+            registerToggle.classList.remove('active');
+        });
+
+        registerToggle.addEventListener('click', () => {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            registerToggle.classList.add('active');
+            loginToggle.classList.remove('active');
+        });
+
+        function toggleCategory() {
+            var role = document.getElementById("role");
+            var categoryDiv = document.getElementById("categoryDiv");
+
+            if (role.value === "user") {
+                categoryDiv.style.display = "none";
+            } else {
+                categoryDiv.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>

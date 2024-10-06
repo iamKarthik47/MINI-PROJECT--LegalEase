@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Advocate Showcase</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Raleway:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0c0c0c;
+            color: #fff;
+            font-family: 'Raleway', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 35%, rgba(36, 16, 35, 0.9) 0%, transparent 50%),
+                radial-gradient(circle at 75% 44%, rgba(6, 46, 40, 0.8) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, #000000 0%, #000000 100%);
+            z-index: -1;
+            animation: backgroundPulse 15s infinite alternate;
+        }
+
+        @keyframes backgroundPulse {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #00e5ff;
+            text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff, 0 0 30px #00e5ff;
+            animation: pulsate 2s infinite alternate;
+            opacity: 0;
+            transform: translateY(-50px);
+            animation: fadeInDown 1s forwards, pulsate 2s 1s infinite alternate;
+        }
+
+        @keyframes pulsate {
+            0% { text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff, 0 0 30px #00e5ff; }
+            100% { text-shadow: 0 0 20px #00e5ff, 0 0 30px #00e5ff, 0 0 40px #00e5ff, 0 0 50px #00e5ff, 0 0 60px #00e5ff; }
+        }
+
+        @keyframes fadeInDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .advocate-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .advocate-card {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            perspective: 1000px;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: fadeInScale 0.5s forwards;
+            animation-delay: calc(var(--order) * 0.1s);
+        }
+
+        @keyframes fadeInScale {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .card-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card-inner.flip {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .card-front {
+            background: linear-gradient(45deg, #0a192f, #20232a);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+        }
+
+        .card-back {
+            background: #0a192f;
+            color: #fff;
+            transform: rotateY(180deg);
+        }
+
+        .advocate-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid #00e5ff;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            transition: all 0.5s ease;
+            animation: imagePulse 2s infinite alternate;
+        }
+
+        @keyframes imagePulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7); }
+            100% { box-shadow: 0 0 0 20px rgba(0, 229, 255, 0); }
+        }
+
+        .advocate-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .advocate-specialization {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #00e5ff;
+        }
+
+        .view-details-btn {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            background-color: #00e5ff;
+            color: #0c0c0c;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-details-btn:hover {
+            background-color: #00b8d4;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 229, 255, 0.4);
+        }
+
+        .view-details-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 1;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+
+        .view-details-btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        .details-card {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 80%;
+            max-width: 600px;
+            background-color: rgba(10, 25, 47, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .details-card.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .details-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #00e5ff;
+        }
+
+        .details-card p {
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .details-card .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .details-card .close-btn:hover {
+            color: #00e5ff;
+        }
+
+        @media (max-width: 768px) {
+            .advocate-list {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .details-card {
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <h1>Advocates</h1>
+        <div class="advocate-list">
+            {% for advocate in advocates %}
+            <div class="advocate-card" style="--order: {{ loop.index }}">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <img src="{{ advocate.image }}" alt="{{ advocate.name }}" class="advocate-image">
+                        <h2 class="advocate-name">{{ advocate.name }}</h2>
+                        <p class="advocate-specialization">{{ advocate.specialization }}</p>
+                        <button class="view-details-btn">View Details</button>
+                    </div>
+                    <div class="card-back" data-name="{{ advocate.name }}"
+                         data-specialization="{{ advocate.specialization }}"
+                         data-place="{{ advocate.place }}"
+                         data-phone="{{ advocate.phone }}"
+                         data-email="{{ advocate.email }}"
+                         data-status="{{ advocate.status }}">
+                        <h2>{{ advocate.name }}</h2>
+                        <p><strong>Specialization:</strong> {{ advocate.specialization }}</p>
+                        <p><strong>Place:</strong> {{ advocate.place }}</p>
+                        <p><strong>Phone:</strong> {{ advocate.phone }}</p>
+                        <p><strong>Email:</strong> {{ advocate.email }}</p>
+                        <p><strong>Status:</strong> {{ advocate.status }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="detailsCard" class="details-card">
+        <span class="close-btn">&times;</span>
+        <div id="detailsContent"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.advocate-card');
+
+            cards.forEach(card => {
+                const btn = card.querySelector('.view-details-btn');
+                const cardInner = card.querySelector('.card-inner');
+                const back = card.querySelector('.card-back');
+
+                btn.addEventListener('click', function() {
+                    cardInner.classList.toggle('flip');
+                    if (cardInner.classList.contains('flip')) {
+                        // Populate and show the details card
+                        document.getElementById('detailsContent').innerHTML = `
+                            <h2>${back.dataset.name}</h2>
+                            <p><strong>Specialization:</strong> ${back.dataset.specialization}</p>
+                            <p><strong>Place:</strong> ${back.dataset.place}</p>
+                            <p><strong>Phone:</strong> ${back.dataset.phone}</p>
+                            <p><strong>Email:</strong> ${back.dataset.email}</p>
+                            <p><strong>Status:</strong> ${back.dataset.status}</p>
+                        `;
+                        const detailsCard = document.getElementById('detailsCard');
+                        detailsCard.style.display = 'block';
+                        setTimeout(() => {
+                            detailsCard.classList.add('show');
+                        }, 10);
+                    }
+                });
+            });
+
+            const detailsCard = document.getElementById('detailsCard');
+            const closeBtn = document.querySelector('.close-btn');
+
+            closeBtn.addEventListener('click', closeDetailsCard);
+
+            window.addEventListener('click', function(event) {
+                if (event.target === detailsCard) {
+                    closeDetailsCard();
+                }
+            });
+
+            function closeDetailsCard() {
+                detailsCard.classList.remove('show');
+                setTimeout(() => {
+                    detailsCard.style.display = 'none';
+                    document.querySelectorAll('.card-inner').forEach(cardInner => cardInner.classList.remove('flip'));
+                }, 300);
+            }
+        });
+    </script>
+</body>
+</html>

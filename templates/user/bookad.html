@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Advocates</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-size: 16px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #FFA500;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            animation: slideIn 0.5s ease-out;
+        }
+        .search-filter input[type="text"],
+        .search-filter select {
+            width: 48%;
+            padding: 12px;
+            border: 1px solid #333333;
+            border-radius: 25px;
+            background-color: #1E1E1E;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .search-filter input[type="text"]:focus,
+        .search-filter select:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #FFA500;
+        }
+        .advocate-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .advocate-card {
+            background-color: #1E1E1E;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease-out;
+        }
+        .advocate-card:hover {
+            background-color: #333333;
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .advocate-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            border: 3px solid #FFA500;
+            transition: all 0.3s ease;
+        }
+        .advocate-card:hover img {
+            transform: scale(1.1);
+        }
+        .advocate-card h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #FFA500;
+        }
+        .advocate-card p {
+            font-size: 16px;
+            color: #CCCCCC;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background-color: #FFA500;
+            color: #1E1E1E;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #FFC72C;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255,165,0,0.4);
+        }
+        .booking-form {
+            display: none;
+            margin-top: 20px;
+            animation: slideIn 0.5s ease-out;
+        }
+        .booking-form.active {
+            display: block;
+        }
+        .booking-form input[type="date"],
+        .booking-form input[type="time"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #333333;
+            border-radius: 25px;
+            background-color: #1E1E1E;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .booking-form input[type="date"]:focus,
+        .booking-form input[type="time"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #FFA500;
+        }
+        .message-box {
+            display: none;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 10px;
+            background-color: #FF6347;
+            color: #ffffff;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+            font-weight: bold;
+        }
+        .message-box.success {
+            background-color: #4CAF50;
+        }
+        .message-box i {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">Advocate Office</div>
+            <div>
+                <button class="btn"><a href="{% url 'user_home' %}" class="btn"><i class="fas fa-chevron-left"></i> Back to Dashboard</a></button>
+            </div>
+        </header>
+        <div class="search-filter">
+            <input type="text" id="search-input" placeholder="Search advocates...">
+            <select id="filter-select">
+                <option value="">Filter by Specialization</option>
+                <option value="criminal">Criminal Law</option>
+                <option value="family">Family Law</option>
+                <option value="corporate">Corporate Law</option>
+                <option value="civil">Civil Law</option>
+            </select>
+        </div>
+        <div class="advocate-list" id="advocate-list">
+            {% for advocate in advocates %}
+            <div class="advocate-card" data-name="{{ advocate.name|lower }}" data-specialization="{{ advocate.specialization|lower }}">
+                <img src="{{ advocate.image }}" alt="{{ advocate.name }}">
+                <h3>{{ advocate.name }}</h3>
+                <p>Specialization: {{ advocate.specialization }}</p>
+                <button class="btn" onclick="showBookingForm({{ advocate.id }})">Book Now</button>
+                <form class="booking-form" id="booking-form-{{ advocate.id }}" method="post" action="{% url 'submit_booking' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="advocate_id" value="{{ advocate.id }}">
+                    <input type="date" name="booking_date" required>
+                    <input type="time" name="booking_time" required>
+                    <button type="submit" class="btn">Submit Booking</button>
+                </form>
+                <div class="message-box" id="message-box-{{ advocate.id }}"></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function showBookingForm(advocateId) {
+            document.querySelectorAll('.booking-form').forEach(form => form.classList.remove('active'));
+            document.getElementById(`booking-form-${advocateId}`).classList.add('active');
+        }
+
+        function validateBooking(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const bookingDate = new Date(form.querySelector('input[name="booking_date"]').value);
+            const bookingTime = form.querySelector('input[name="booking_time"]').value;
+            const currentDate = new Date();
+            const advocateId = form.querySelector('input[name="advocate_id"]').value;
+            const messageBox = document.getElementById(`message-box-${advocateId}`);
+
+            messageBox.innerHTML = '';
+            messageBox.style.display = 'none';
+            messageBox.className = 'message-box';
+
+            if (bookingDate <= currentDate) {
+                showError(messageBox, "Booking date must be in the future.");
+                return false;
+            }
+
+            if (bookingDate.getDay() === 0) {
+                showError(messageBox, "Booking cannot be made on Sundays.");
+                return false;
+            }
+
+            const bookingHours = parseInt(bookingTime.split(':')[0]);
+            if (bookingHours < 10 || bookingHours >= 16) {
+                showError(messageBox, "Booking time must be between 10 AM and 4 PM.");
+                return false;
+            }
+
+            // If all validations pass, submit the form
+            form.submit();
+        }
+
+        function showError(messageBox, message) {
+            messageBox.innerHTML = `<i class="fas fa-exclamation-circle"></i>${message}`;
+            messageBox.style.display = 'block';
+            messageBox.classList.remove('success');
+        }
+
+        function filterAdvocates() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filterValue = document.getElementById('filter-select').value.toLowerCase();
+
+            document.querySelectorAll('.advocate-card').forEach(card => {
+                const name = card.getAttribute('data-name');
+                const specialization = card.getAttribute('data-specialization');
+                const nameMatch = name.includes(searchTerm);
+                const specializationMatch = filterValue === '' || specialization === filterValue;
+
+                if (nameMatch && specializationMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Add event listeners for search and filter
+        document.getElementById('search-input').addEventListener('input', filterAdvocates);
+        document.getElementById('filter-select').addEventListener('change', filterAdvocates);
+
+        // Add event listeners for form validation
+        document.querySelectorAll('.booking-form').forEach(form => {
+            form.addEventListener('submit', validateBooking);
+        });
+    </script>
+</body>
+</html>
