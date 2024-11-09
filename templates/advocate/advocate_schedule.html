@@ -1,927 +1,986 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advocate Schedule - LegalEase Pro</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/themes/light.css" rel="stylesheet">
-    <!-- Your custom styles here -->
-     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advocate Schedule - LegalEase Pro</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/themes/light.css" rel="stylesheet">
+<!-- Your custom styles here -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-        :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #f39c12;
-            --accent-color: #e74c3c;
-            --background-color: #1a1a2e;
-            --text-color: #ffffff;
-            --card-bg-color: rgba(255, 255, 255, 0.1);
-        }
+:root {
+--primary-color: #4a90e2;
+--secondary-color: #f39c12;
+--accent-color: #e74c3c;
+--background-color: #1a1a2e;
+--text-color: #ffffff;
+--card-bg-color: rgba(255, 255, 255, 0.1);
+}
 
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-        }
+body, html {
+height: 100%;
+margin: 0;
+font-family: 'Poppins', sans-serif;
+background-color: var(--background-color);
+color: var(--text-color);
+overflow-x: hidden;
+}
 
-        .schedule-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            position: relative;
-            overflow: hidden;
-        }
+.schedule-container {
+display: flex;
+flex-direction: column;
+min-height: 100vh;
+background: linear-gradient(135deg, #1a1a2e, #16213e);
+position: relative;
+overflow: hidden;
+}
 
-        .header {
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
+.header {
+background: rgba(255,255,255,0.05);
+backdrop-filter: blur(10px);
+padding: 2rem;
+text-align: center;
+position: relative;
+overflow: hidden;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            animation: rotate 20s linear infinite;
-        }
+.header::before {
+content: '';
+position: absolute;
+top: -50%;
+left: -50%;
+width: 200%;
+height: 200%;
+background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+animation: rotate 20s linear infinite;
+}
 
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+@keyframes rotate {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
 
-        .header h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
+.header h1 {
+font-size: 3rem;
+margin-bottom: 1rem;
+position: relative;
+z-index: 1;
+background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
 
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 2rem;
-        }
+.main-content {
+flex: 1;
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: center;
+padding: 2rem;
+}
 
-        .section-tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2rem;
-            background: rgba(255,255,255,0.1);
-            padding: 10px;
-            border-radius: 50px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
+.section-tabs {
+display: flex;
+justify-content: center;
+margin-bottom: 2rem;
+background: rgba(255,255,255,0.1);
+padding: 10px;
+border-radius: 50px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
 
-        .section-tab {
-            background: transparent;
-            padding: 10px 20px;
-            border-radius: 25px;
-            margin: 0 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
+.section-tab {
+background: transparent;
+padding: 10px 20px;
+border-radius: 25px;
+margin: 0 10px;
+cursor: pointer;
+transition: all 0.3s ease;
+font-weight: 600;
+}
 
-        .section-tab.active {
-            background: var(--primary-color);
-            color: #ffffff;
-            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);
-        }
+.section-tab.active {
+background: var(--primary-color);
+color: #ffffff;
+box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);
+}
 
-        .section-tab:hover {
-            background: rgba(255,255,255,0.2);
-        }
+.section-tab:hover {
+background: rgba(255,255,255,0.2);
+}
 
-        .section-content {
-            width: 100%;
-            max-width: 1000px;
-            background: var(--card-bg-color);
-            padding: 30px;
-            border-radius: 20px;
-            display: none;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
+.section-content {
+width: 100%;
+max-width: 1000px;
+background: var(--card-bg-color);
+padding: 30px;
+border-radius: 20px;
+display: none;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(10px);
+}
 
-        .section-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
+.section-content.active {
+display: block;
+animation: fadeIn 0.5s ease;
+}
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
 
-        .calendar-container {
-            width: 100%;
-            margin-bottom: 2rem;
-        }
+.calendar-container {
+width: 100%;
+margin-bottom: 2rem;
+}
 
-        .appointment-list {
-            width: 100%;
-        }
+.appointment-list {
+width: 100%;
+}
 
-        .appointment-item {
-            background: var(--card-bg-color);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
+.appointment-item {
+background: var(--card-bg-color);
+padding: 20px;
+border-radius: 15px;
+margin-bottom: 1rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+transition: all 0.3s ease;
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
 
-        .appointment-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
+.appointment-item:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
 
-        .appointment-item .client-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
+.appointment-item .client-name {
+font-size: 1.2rem;
+font-weight: 600;
+}
 
-        .appointment-item .appointment-time {
-            font-size: 1rem;
-            color: var(--secondary-color);
-        }
+.appointment-item .appointment-time {
+font-size: 1rem;
+color: var(--secondary-color);
+}
 
-        .appointment-item .accept-button,
-        .appointment-item .reject-button {
-            border: none;
-            padding: 10px 20px;
-            color: #ffffff;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            margin-left: 10px;
-        }
+.appointment-item .accept-button,
+.appointment-item .reject-button {
+border: none;
+padding: 10px 20px;
+color: #ffffff;
+font-size: 1rem;
+font-weight: 600;
+cursor: pointer;
+border-radius: 25px;
+transition: all 0.3s ease;
+margin-left: 10px;
+}
 
-        .appointment-item .accept-button {
-            background: linear-gradient(45deg, var(--primary-color), #2ecc71);
-        }
+.appointment-item .accept-button {
+background: linear-gradient(45deg, var(--primary-color), #2ecc71);
+}
 
-        .appointment-item .reject-button {
-            background: linear-gradient(45deg, var(--accent-color), #c0392b);
-        }
+.appointment-item .reject-button {
+background: linear-gradient(45deg, var(--accent-color), #c0392b);
+}
 
-        .appointment-item .accept-button:hover,
-        .appointment-item .reject-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
+.appointment-item .accept-button:hover,
+.appointment-item .reject-button:hover {
+transform: scale(1.05);
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
 
-        .fc-theme-standard td, .fc-theme-standard th {
-            border-color: rgba(255, 255, 255, 0.1);
-        }
+.fc-theme-standard td, .fc-theme-standard th {
+border-color: rgba(255, 255, 255, 0.1);
+}
 
-        .fc .fc-daygrid-day-number, .fc .fc-col-header-cell-cushion {
-            color: var(--text-color);
-        }
+.fc .fc-daygrid-day-number, .fc .fc-col-header-cell-cushion {
+color: var(--text-color);
+}
 
-        .fc-daygrid-event {
-            border-radius: 20px;
-            padding: 2px 8px;
-        }
+.fc-daygrid-event {
+border-radius: 20px;
+padding: 2px 8px;
+}
 
-        .fc-event-title {
-            font-weight: 600;
-        }
+.fc-event-title {
+font-weight: 600;
+}
 
-        .fc-event-free-time {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
+.fc-event-free-time {
+background-color: var(--secondary-color);
+border-color: var(--secondary-color);
+}
 
-        .fc-event-meeting {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
+.fc-event-meeting {
+background-color: var(--primary-color);
+border-color: var(--primary-color);
+}
 
-        .fc-event-court {
-            background-color: #2ecc71;
-            border-color: #2ecc71;
-        }
+.fc-event-court {
+background-color: #2ecc71;
+border-color: #2ecc71;
+}
 
-        .fc-event-consultation {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
+.fc-event-consultation {
+background-color: var(--accent-color);
+border-color: var(--accent-color);
+}
 
-        .fc .fc-button-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
+.fc .fc-button-primary {
+background-color: var(--primary-color);
+border-color: var(--primary-color);
+}
 
-        .fc .fc-button-primary:not(:disabled):active,
-        .fc .fc-button-primary:not(:disabled).fc-button-active {
-            background-color: #3070b3;
-            border-color: #3070b3;
-        }
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+background-color: #3070b3;
+border-color: #3070b3;
+}
 
-        .fc .fc-button-primary:hover {
-            background-color: #3070b3;
-            border-color: #3070b3;
-        }
+.fc .fc-button-primary:hover {
+background-color: #3070b3;
+border-color: #3070b3;
+}
 
-        .stats-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-        }
+.stats-container {
+display: flex;
+justify-content: space-between;
+margin-bottom: 2rem;
+}
 
-        .stat-card {
-            background: var(--card-bg-color);
-            padding: 20px;
-            border-radius: 15px;
-            flex: 1;
-            margin: 0 10px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
+.stat-card {
+background: var(--card-bg-color);
+padding: 20px;
+border-radius: 15px;
+flex: 1;
+margin: 0 10px;
+text-align: center;
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(10px);
+}
 
-        .stat-card h3 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary-color);
-        }
+.stat-card h3 {
+font-size: 2rem;
+margin-bottom: 0.5rem;
+color: var(--primary-color);
+}
 
-        .stat-card p {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.7);
-        }
+.stat-card p {
+font-size: 1rem;
+color: rgba(255, 255, 255, 0.7);
+}
 
-        @media (max-width: 768px) {
-            .stats-container {
-                flex-direction: column;
-            }
+@media (max-width: 768px) {
+.stats-container {
+flex-direction: column;
+}
 
-            .stat-card {
-                margin: 10px 0;
-            }
-        }
+.stat-card {
+margin: 10px 0;
+}
+}
 
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
+#loading-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.7);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 9999;
+}
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+.spinner {
+width: 50px;
+height: 50px;
+border: 5px solid #f3f3f3;
+border-top: 5px solid var(--primary-color);
+border-radius: 50%;
+animation: spin 1s linear infinite;
+}
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
+.modal {
+display: none;
+position: fixed;
+z-index: 1000;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+overflow: auto;
+background-color: rgba(0,0,0,0.4);
+}
 
-        .modal-content {
-            background-color: var(--background-color);
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid var(--primary-color);
-            width: 80%;
-            max-width: 500px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
+.modal-content {
+background-color: var(--background-color);
+margin: 15% auto;
+padding: 20px;
+border: 1px solid var(--primary-color);
+width: 80%;
+max-width: 500px;
+border-radius: 15px;
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
+.close {
+color: #aaa;
+float: right;
+font-size: 28px;
+font-weight: bold;
+}
 
-        .close:hover,
-        .close:focus {
-            color: #fff;
-            text-decoration: none;
-            cursor: pointer;
-        }
+.close:hover,
+.close:focus {
+color: #fff;
+text-decoration: none;
+cursor: pointer;
+}
 
-        .form-group {
-            margin-bottom: 1rem;
-        }
+.form-group {
+margin-bottom: 1rem;
+}
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
+.form-group label {
+display: block;
+margin-bottom: 0.5rem;
+}
 
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid var(--primary-color);
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-        }
+.form-group input,
+.form-group select {
+width: 100%;
+padding: 0.5rem;
+border: 1px solid var(--primary-color);
+border-radius: 5px;
+background-color: rgba(255, 255, 255, 0.1);
+color: var(--text-color);
+}
 
-        .form-group input[type="submit"] {
-            background-color: var(--primary-color);
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+.form-group input[type="submit"] {
+background-color: var(--primary-color);
+color: white;
+cursor: pointer;
+transition: background-color 0.3s ease;
+}
 
-        .form-group input[type="submit"]:hover {
-            background-color: #3070b3;
-        }
+.form-group input[type="submit"]:hover {
+background-color: #3070b3;
+}
 
-        #notifications {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
+#notifications {
+position: fixed;
+top: 20px;
+right: 20px;
+z-index: 1000;
+}
 
-        .notification {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            animation: slideIn 0.5s ease-out;
-        }
+.notification {
+background-color: var(--primary-color);
+color: white;
+padding: 15px;
+margin-bottom: 10px;
+border-radius: 5px;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+display: flex;
+justify-content: space-between;
+align-items: center;
+animation: slideIn 0.5s ease-out;
+}
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
+@keyframes slideIn {
+from {
+transform: translateX(100%);
+opacity: 0;
+}
+to {
+transform: translateX(0);
+opacity: 1;
+}
+}
 
-        .notification.success {
-            background-color: #2ecc71;
-        }
+.notification.success {
+background-color: #2ecc71;
+}
 
-        .notification.error {
-            background-color: var(--accent-color);
-        }
+.notification.error {
+background-color: var(--accent-color);
+}
 
-        .notification .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-        }
+.notification .close-btn {
+background: none;
+border: none;
+color: white;
+font-size: 20px;
+cursor: pointer;
+}
 
-        .tippy-box[data-theme~='custom'] {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            border: 1px solid var(--primary-color);
-        }
+.tippy-box[data-theme~='custom'] {
+background-color: var(--background-color);
+color: var(--text-color);
+border: 1px solid var(--primary-color);
+}
 
-        #dashboard-stats-chart {
-            width: 100%;
-            height: 300px;
-            margin-top: 2rem;
-        }
-    </style>
+#dashboard-stats-chart {
+width: 100%;
+height: 300px;
+margin-top: 2rem;
+}
+</style>
 </head>
 <body>
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-    </div>
-    <div class="schedule-container">
-        <div class="header">
-            <h1>Advocate Schedule</h1>
-        </div>
-        <div class="main-content">
-            <div class="section-tabs">
-                <div class="section-tab active" data-section="dashboard">Dashboard</div>
-                <div class="section-tab" data-section="schedule">Schedule</div>
-                <div class="section-tab" data-section="appointments">Appointments</div>
-            </div>
-            <div class="section-content active" id="dashboard">
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <h3 id="total-appointments">0</h3>
-                        <p>Total Appointments</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3 id="upcoming-appointments">0</h3>
-                        <p>Upcoming Appointments</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3 id="free-time-slots">0</h3>
-                        <p>Free Time Slots</p>
-                    </div>
-                </div>
-                <div class="calendar-container">
-                    <div id="mini-calendar"></div>
-                </div>
-                <div id="dashboard-stats-chart"></div>
-            </div>
-            <div class="section-content" id="schedule">
-                <div class="calendar-container">
-                    <div id="calendar"></div>
-                </div>
-            </div>
-            <div class="section-content" id="appointments">
-                <div class="appointment-list">
-                    <h2>Appointment Requests</h2>
-                    <div id="appointment-items">
-                        {% for booking in bookings %}
-                        <div class="appointment-item" data-id="{{ booking.id }}">
-                            <div class="client-name">{{ booking.USER.name }}</div>
-                            <div class="appointment-time">{{ booking.date }}</div>
-                            <button class="accept-button" data-id="{{ booking.id }}">Accept</button>
-                            <button class="reject-button" data-id="{{ booking.id }}">Reject</button>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div id="loading-overlay">
+<div class="spinner"></div>
+</div>
+<div class="schedule-container">
+<div class="header">
+<h1>Advocate Schedule</h1>
+</div>
+<div class="main-content">
+<div class="section-tabs">
+<div class="section-tab active" data-section="dashboard">Dashboard</div>
+<div class="section-tab" data-section="schedule">Schedule</div>
+<div class="section-tab" data-section="appointments">Appointments</div>
+</div>
+<div class="section-content active" id="dashboard">
+<div class="stats-container">
+<div class="stat-card">
+<h3 id="total-appointments">0</h3>
+<p>Total Appointments</p>
+</div>
+<div class="stat-card">
+<h3 id="upcoming-appointments">0</h3>
+<p>Upcoming Appointments</p>
+</div>
+<div class="stat-card">
+<h3 id="free-time-slots">0</h3>
+<p>Free Time Slots</p>
+</div>
+</div>
+<div class="calendar-container">
+<div id="mini-calendar"></div>
+</div>
+<div id="dashboard-stats-chart"></div>
+</div>
+<div class="section-content" id="schedule">
+<div class="calendar-container">
+<div id="calendar"></div>
+</div>
+</div>
+<div class="section-content" id="appointments">
+<div class="appointment-list">
+<h2>Appointment Requests</h2>
+<div id="appointment-items">
+{% for booking in bookings %}
+<div class="appointment-item" data-id="{{ booking.id }}">
+<div class="client-name">{{ booking.USER.name }}</div>
+<div class="appointment-time">{{ booking.date }}</div>
+<button class="accept-button" data-id="{{ booking.id }}">Accept</button>
+<button class="reject-button" data-id="{{ booking.id }}">Reject</button>
+</div>
+{% endfor %}
+</div>
+</div>
+</div>
+</div>
+</div>
 
-    <div id="event-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Add/Edit Event</h2>
-            <form id="event-form">
-                <div class="form-group">
-                    <label for="event-title">Title:</label>
-                    <input type="text" id="event-title" name="title" required>
-                </div>
-                <div class="form-group">
-                    <label for="event-start">Start:</label>
-                    <input type="datetime-local" id="event-start" name="start" required>
-                </div>
-                <div class="form-group">
-                    <label for="event-end">End:</label>
-                    <input type="datetime-local" id="event-end" name="end" required>
-                </div>
-                <div class="form-group">
-                    <label for="event-type">Type:</label>
-                    <select id="event-type" name="type">
-                        <option value="meeting">Meeting</option>
-                        <option value="free-time">Free Time</option>
-                        <option value="court">Court</option>
-                        <option value="consultation">Consultation</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Save Event">
-                </div>
-            </form>
-        </div>
-    </div>
+<div id="event-modal" class="modal">
+<div class="modal-content">
+<span class="close">&times;</span>
+<h2>Add/Edit Event</h2>
+<form id="event-form">
+<div class="form-group">
+<label for="event-title">Title:</label>
+<input type="text" id="event-title" name="title" required>
+</div>
+<div class="form-group">
+<label for="event-start">Start:</label>
+<input type="datetime-local" id="event-start" name="start" required>
+</div>
+<div class="form-group">
+<label for="event-end">End:</label>
+<input type="datetime-local" id="event-end" name="end" required>
+</div>
+<div class="form-group">
+<label for="event-type">Type:</label>
+<select id="event-type" name="type">
+<option value="meeting">Meeting</option>
+<option value="free-time">Free Time</option>
+<option value="court">Court</option>
+<option value="consultation">Consultation</option>
+</select>
+</div>
+<div class="form-group">
+<input type="submit" value="Save Event">
+</div>
+</form>
+</div>
+</div>
 
-    <div id="notifications"></div>
+<div id="notifications"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const loadingOverlay = document.getElementById('loading-overlay');
-            const calendarEl = document.getElementById('calendar');
-            const miniCalendarEl = document.getElementById('mini-calendar');
-            const appointmentItems = document.getElementById('appointment-items');
-            const totalAppointmentsEl = document.getElementById('total-appointments');
-            const upcomingAppointmentsEl = document.getElementById('upcoming-appointments');
-            const freeTimeSlotsEl = document.getElementById('free-time-slots');
-            const modal = document.getElementById('event-modal');
-            const closeModal = document.getElementsByClassName('close')[0];
-            const eventForm = document.getElementById('event-form');
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tippy.js@6.3.7/dist/tippy-bundle.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const loadingOverlay = document.getElementById('loading-overlay');
+const calendarEl = document.getElementById('calendar');
+const miniCalendarEl = document.getElementById('mini-calendar');
+const appointmentItems = document.getElementById('appointment-items');
+const totalAppointmentsEl = document.getElementById('total-appointments');
+const upcomingAppointmentsEl = document.getElementById('upcoming-appointments');
+const freeTimeSlotsEl = document.getElementById('free-time-slots');
+const modal = document.getElementById('event-modal');
+const closeModal = document.getElementsByClassName('close')[0];
+const eventForm = document.getElementById('event-form');
 
-            let calendar, miniCalendar, chart;
+let calendar, miniCalendar, chart;
 
-            // Simulated data loading
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-                initializeCalendars();
-                initializeChart();
-                updateStats();
-            }, 1500);
+function roundToSlotTime(date) {
+const slotDuration = 15; // minutes
+const minutes = date.getMinutes();
+const roundedMinutes = Math.round(minutes / slotDuration) * slotDuration;
+const newDate = new Date(date);
+newDate.setMinutes(roundedMinutes);
+newDate.setSeconds(0);
+newDate.setMilliseconds(0);
+return newDate;
+}
 
-            function initializeCalendars() {
-                const sharedOptions = {
-                    initialView: 'dayGridMonth',
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                    },
-                    events: [],
-                    editable: true,
-                    selectable: true,
-                    slotMinTime: '08:00:00',
-                    slotMaxTime: '20:00:00',
-                    slotDuration: '00:15:00',
-                    allDaySlot: false,
-                    eventDrop: function(info) {
-                        if (isOverlapping(info.event)) {
-                            info.revert();
-                            showNotification('Event overlaps with existing appointments', 'error');
-                        } else {
-                            updateEvent(info.event);
-                        }
-                    },
-                    eventResize: function(info) {
-                        if (isOverlapping(info.event)) {
-                            info.revert();
-                            showNotification('Event overlaps with existing appointments', 'error');
-                        } else {
-                            updateEvent(info.event);
-                        }
-                    },
-                    select: function(info) {
-                        showEventModal(info);
-                    },
-                    eventClick: function(info) {
-                        handleEventClick(info.event);
-                    },
-                    eventContent: function(arg) {
-                        return {
-                            html: `<div class="fc-event-main-frame">
-                                <div class="fc-event-time">${formatEventTime(arg.event)}</div>
-                                <div class="fc-event-title-container">
-                                    <div class="fc-event-title fc-sticky">${arg.event.title}</div>
-                                </div>
-                            </div>`
-                        };
-                    }
-                };
+function initializeCalendars() {
+const sharedOptions = {
+initialView: 'dayGridMonth',
+headerToolbar: {
+left: 'prev,next today',
+center: 'title',
+right: 'dayGridMonth,timeGridWeek,timeGridDay'
+},
+events: [],
+editable: true,
+selectable: true,
+slotMinTime: '08:00:00',
+slotMaxTime: '20:00:00',
+slotDuration: '00:15:00',
+snapDuration: '00:15:00',
+allDaySlot: false,
+eventDrop: function(info) {
+const newStart = roundToSlotTime(info.event.start);
+const newEnd = roundToSlotTime(info.event.end);
+info.event.setStart(newStart);
+info.event.setEnd(newEnd);
 
-                calendar = new FullCalendar.Calendar(calendarEl, {
-                    ...sharedOptions,
-                    height: 'auto'
-                });
-                calendar.render();
+if (isOverlapping(info.event)) {
+info.revert();
+showNotification('Event overlaps with existing appointments', 'error');
+} else {
+updateEvent(info.event);
+}
+},
+eventResize: function(info) {
+const newStart = roundToSlotTime(info.event.start);
+const newEnd = roundToSlotTime(info.event.end);
+info.event.setStart(newStart);
+info.event.setEnd(newEnd);
 
-                miniCalendar = new FullCalendar.Calendar(miniCalendarEl, {
-                    ...sharedOptions,
-                    height: 'auto',
-                    headerToolbar: {
-                        left: 'prev,next',
-                        center: 'title',
-                        right: 'today'
-                    }
-                });
-                miniCalendar.render();
+if (isOverlapping(info.event)) {
+info.revert();
+showNotification('Event overlaps with existing appointments', 'error');
+} else {
+updateEvent(info.event);
+}
+},
+select: function(info) {
+const roundedStart = roundToSlotTime(info.start);
+const roundedEnd = roundToSlotTime(info.end);
+showEventModal({ start: roundedStart, end: roundedEnd });
+},
+eventClick: function(info) {
+handleEventClick(info.event);
+},
+eventContent: function(arg) {
+return {
+html: `<div class="fc-event-main-frame">
+<div class="fc-event-time">${formatEventTime(arg.event)}</div>
+<div class="fc-event-title-container">
+<div class="fc-event-title fc-sticky">${arg.event.title}</div>
+</div>
+</div>`
+};
+}
+};
 
-                // Initialize tooltips for events
-                tippy('[data-tippy-content]', {
-                    theme: 'custom',
-                    allowHTML: true
-                });
-            }
+calendar = new FullCalendar.Calendar(calendarEl, {
+...sharedOptions,
+height: 'auto'
+});
+calendar.render();
 
-            function initializeChart() {
-                const ctx = document.getElementById('dashboard-stats-chart').getContext('2d');
-                chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                        datasets: [{
-                            label: 'Appointments',
-                            data: [12, 19, 3, 5, 2, 3, 10, 15, 8, 12, 17, 20],
-                            borderColor: 'rgb(75, 192, 192)',
-                            tension: 0.1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            title: {
-                                display: true,
-                                text: 'Appointments Throughout the Year'
-                            }
-                        }
-                    }
-                });
-            }
+miniCalendar = new FullCalendar.Calendar(miniCalendarEl, {
+...sharedOptions,
+height: 'auto',
+headerToolbar: {
+left: 'prev,next',
+center: 'title',
+right: 'today'
+}
+});
+miniCalendar.render();
+}
 
-            function updateEvent(event) {
-                console.log(event.title + " was updated. New details: ", event.start, event.end);
-                updateStats();
-                showNotification('Event updated successfully', 'success');
-            }
+function initializeChart() {
+const ctx = document.getElementById('dashboard-stats-chart').getContext('2d');
+chart = new Chart(ctx, {
+type: 'line',
+data: {
+labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+datasets: [{
+label: 'Appointments',
+data: [12, 19, 3, 5, 2, 3, 10, 15, 8, 12, 17, 20],
+borderColor: 'rgb(75, 192, 192)',
+tension: 0.1
+}]
+},
+options: {
+responsive: true,
+plugins: {
+legend: {
+position: 'top',
+},
+title: {
+display: true,
+text: 'Appointments Throughout the Year'
+}
+}
+}
+});
+}
 
-            function showEventModal(info) {
-                const startInput = document.getElementById('event-start');
-                const endInput = document.getElementById('event-end');
-                startInput.value = info.startStr;
-                endInput.value = info.endStr;
-                modal.style.display = 'block';
-            }
+function updateEvent(event) {
+console.log(event.title + " was updated. New details: ", event.start, event.end);
+updateStats();
+showNotification('Event updated successfully', 'success');
+}
 
-            closeModal.onclick = function() {
-                modal.style.display = 'none';
-            }
+function showEventModal(info) {
+const startInput = document.getElementById('event-start');
+const endInput = document.getElementById('event-end');
 
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
+const roundedStart = roundToSlotTime(info.start);
+const roundedEnd = roundToSlotTime(info.end);
 
-            eventForm.onsubmit = function(e) {
-                e.preventDefault();
-                const formData = new FormData(eventForm);
-                const newEvent = {
-                    title: formData.get('title'),
-                    start: formData.get('start'),
-                    end: formData.get('end'),
-                    className: `fc-event-${formData.get('type')}`
-                };
+startInput.value = roundedStart.toISOString().slice(0, 16);
+endInput.value = roundedEnd.toISOString().slice(0, 16);
 
-                if (isOverlapping(newEvent)) {
-                    showNotification('Event overlaps with existing appointments', 'error');
-                    return;
-                }
+modal.style.display = 'block';
+}
 
-                calendar.addEvent(newEvent);
-                miniCalendar.addEvent(newEvent);
-                modal.style.display = 'none';
-                updateStats();
-                showNotification('Event added successfully', 'success');
-            }
+function handleEventClick(event) {
+const eventDetails = `
+<strong>${event.title}</strong><br>
+Start: ${formatEventTime(event)}<br>
+End: ${formatEventTime(event, true)}<br>
+<button onclick="editEvent('${event.id}')">Edit</button>
+<button onclick="deleteEvent('${event.id}')">Delete</button>
+`;
 
-            function handleEventClick(event) {
-                const eventDetails = `
-                    <strong>${event.title}</strong><br>
-                    Start: ${formatEventTime(event)}<br>
-                    End: ${formatEventTime(event, true)}<br>
-                    <button onclick="editEvent('${event.id}')">Edit</button>
-                    <button onclick="deleteEvent('${event.id}')">Delete</button>
-                `;
+tippy(event.el, {
+content: eventDetails,
+theme: 'custom',
+allowHTML: true,
+interactive: true
+}).show();
+}
 
-                tippy(event.el, {
-                    content: eventDetails,
-                    theme: 'custom',
-                    allowHTML: true,
-                    interactive: true
-                }).show();
-            }
+closeModal.onclick = function() {
+modal.style.display = 'none';
+}
 
-            window.editEvent = function(eventId) {
-                const event = calendar.getEventById(eventId);
-                if (event) {
-                    document.getElementById('event-title').value = event.title;
-                    document.getElementById('event-start').value = event.start.toISOString().slice(0, 16);
-                    document.getElementById('event-end').value = event.end.toISOString().slice(0, 16);
-                    document.getElementById('event-type').value = event.classNames[0].replace('fc-event-', '');
-                    modal.style.display = 'block';
-                }
-            }
+window.onclick = function(event) {
+if (event.target == modal) {
+modal.style.display = 'none';
+}
+}
 
-            window.deleteEvent = function(eventId) {
-                if (confirm('Are you sure you want to delete this event?')) {
-                    const event = calendar.getEventById(eventId);
-                    if (event) {
-                        event.remove();
-                        updateStats();
-                        showNotification('Event deleted successfully', 'success');
-                    }
-                }
-            }
+eventForm.onsubmit = function(e) {
+e.preventDefault();
+const formData = new FormData(eventForm);
+const newEvent = {
+title: formData.get('title'),
+start: roundToSlotTime(new Date(formData.get('start'))),
+end: roundToSlotTime(new Date(formData.get('end'))),
+className: `fc-event-${formData.get('type')}`
+};
 
-            function updateStats() {
-                const events = calendar.getEvents();
-                const now = new Date();
+if (isOverlapping(newEvent)) {
+showNotification('Event overlaps with existing appointments', 'error');
+return;
+}
 
-                const totalAppointments = events.length;
-                const upcomingAppointments = events.filter(event => event.start > now).length;
-                const freeTimeSlots = events.filter(event => event.classNames.includes('fc-event-free-time')).length;
+addEventToCalendar(newEvent);
+modal.style.display = 'none';
+updateStats();
+showNotification('Event added successfully', 'success');
+}
 
-                totalAppointmentsEl.textContent = totalAppointments;
-                upcomingAppointmentsEl.textContent = upcomingAppointments;
-                freeTimeSlotsEl.textContent = freeTimeSlots;
+window.editEvent = function(eventId) {
+const event = calendar.getEventById(eventId);
+if (event) {
+document.getElementById('event-title').value = event.title;
+document.getElementById('event-start').value = event.start.toISOString().slice(0, 16);
+document.getElementById('event-end').value = event.end.toISOString().slice(0, 16);
+document.getElementById('event-type').value = event.classNames[0].replace('fc-event-', '');
+modal.style.display = 'block';
+}
+}
 
-                // Update chart data
-                chart.data.datasets[0].data = [12, 19, 3, 5, 2, 3, 10, 15, 8, 12, 17, totalAppointments];
-                chart.update();
-            }
+window.deleteEvent = function(eventId) {
+if (confirm('Are you sure you want to delete this event?')) {
+const event = calendar.getEventById(eventId);
+if (event) {
+event.remove();
+updateStats();
+showNotification('Event deleted successfully', 'success');
+}
+}
+}
 
-            // Handle section tabs
-            document.querySelectorAll('.section-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    document.querySelectorAll('.section-content').forEach(content => content.classList.remove('active'));
-                    document.getElementById(this.dataset.section).classList.add('active');
+function updateStats() {
+const events = calendar.getEvents();
+const now = new Date();
 
-                    // Trigger window resize to fix any FullCalendar rendering issues
-                    window.dispatchEvent(new Event('resize'));
-                });
-            });
+const totalAppointments = events.length;
+const upcomingAppointments = events.filter(event => event.start > now).length;
+const freeTimeSlots = events.filter(event => event.classNames.includes('fc-event-free-time')).length;
 
-            // Handle accept and reject buttons
-            appointmentItems.addEventListener('click', function(e) {
-                if (e.target.classList.contains('accept-button')) {
-                    acceptAppointment(e.target.dataset.id);
-                } else if (e.target.classList.contains('reject-button')) {
-                    rejectAppointment(e.target.dataset.id);
-                }
-            });
+totalAppointmentsEl.textContent = totalAppointments;
+upcomingAppointmentsEl.textContent = upcomingAppointments;
+freeTimeSlotsEl.textContent = freeTimeSlots;
 
-             function acceptAppointment(id) {
-    fetch('/update_booking_status/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: `booking_id=${id}&status=Accepted`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            const appointmentItem = document.querySelector(`.appointment-item[data-id="${id}"]`);
-            const newEvent = {
-                id: data.event.id,
-                title: data.event.title,
-                start: new Date(data.event.start),
-                end: new Date(data.event.end),
-                className: 'fc-event-consultation'
-            };
+// Update chart data
+chart.data.datasets[0].data = [12, 19, 3, 5, 2, 3, 10, 15, 8, 12, 17, totalAppointments];
+chart.update();
+}
 
-            if (isOverlapping(newEvent)) {
-                showNotification('Appointment overlaps with existing events. Please reschedule.', 'error');
-                return;
-            }
+function acceptAppointment(id) {
+fetch('/update_booking_status/', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/x-www-form-urlencoded',
+'X-CSRFToken': '{{ csrf_token }}'
+},
+body: `booking_id=${id}&status=Accepted`
+})
+.then(response => response.json())
+.then(data => {
+if (data.status === 'success') {
+const appointmentItem = document.querySelector(`.appointment-item[data-id="${id}"]`);
+const startTime = new Date(data.event.start);
 
-            appointmentItem.remove();
-            calendar.addEvent(newEvent);
-            miniCalendar.addEvent(newEvent);
-            updateStats();
-            showNotification('Appointment accepted', 'success');
-        }
-    });
+// Subtract 5 hours and 30 minutes from the start time
+startTime.setHours(startTime.getHours() - 5);
+startTime.setMinutes(startTime.getMinutes() - 30);
+
+const endTime = new Date(startTime.getTime() + 30 * 60000); // 30 minutes duration
+
+const newEvent = {
+id: data.event.id,
+title: data.event.title,
+start: startTime,
+end: endTime,
+className: 'fc-event-consultation'
+};
+
+if (isOverlapping(newEvent)) {
+showNotification('Appointment overlaps with existing events. Please reschedule.', 'error');
+return;
+}
+
+addEventToCalendar(newEvent);
+appointmentItem.remove();
+updateStats();
+
+const formattedStartTime = startTime.toLocaleTimeString([], {
+hour: '2-digit',
+minute: '2-digit'
+});
+const formattedEndTime = endTime.toLocaleTimeString([], {
+hour: '2-digit',
+minute: '2-digit'
+});
+
+showNotification(`Appointment accepted for ${formattedStartTime} to ${formattedEndTime}`, 'success');
+}
+});
 }
 
 function rejectAppointment(id) {
-    fetch('/update_booking_status/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: `booking_id=${id}&status=Rejected`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            const appointmentItem = document.querySelector(`.appointment-item[data-id="${id}"]`);
-            appointmentItem.remove();
-            showNotification('Appointment rejected', 'error');
-        }
-    });
+fetch('/update_booking_status/', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/x-www-form-urlencoded',
+'X-CSRFToken': '{{ csrf_token }}'
+},
+body: `booking_id=${id}&status=Rejected`
+})
+.then(response => response.json())
+.then(data => {
+if (data.status === 'success') {
+const appointmentItem = document.querySelector(`.appointment-item[data-id="${id}"]`);
+appointmentItem.remove();
+showNotification('Appointment rejected', 'error');
+}
+});
 }
 
 function showNotification(message, type = 'success') {
-    const notificationContainer = document.getElementById('notifications');
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.innerHTML = `
-        ${message}
-        <button class="close-btn">&times;</button>
-    `;
-    notificationContainer.appendChild(notification);
+const notificationContainer = document.getElementById('notifications');
+const notification = document.createElement('div');
+notification.className = `notification ${type}`;
+notification.innerHTML = `
+${message}
+<button class="close-btn">&times;</button>
+`;
+notificationContainer.appendChild(notification);
 
-    notification.querySelector('.close-btn').addEventListener('click', () => {
-        notification.remove();
-    });
+notification.querySelector('.close-btn').addEventListener('click', () => {
+notification.remove();
+});
 
-    setTimeout(() => {
-        notification.remove();
-    }, 5000);
+setTimeout(() => {
+notification.remove();
+}, 5000);
 }
 
 function isOverlapping(newEvent) {
-    const existingEvents = calendar.getEvents();
-    return existingEvents.some(existingEvent => {
-        return newEvent.start < existingEvent.end && newEvent.end > existingEvent.start;
-    });
+const existingEvents = calendar.getEvents();
+return existingEvents.some(existingEvent => {
+return newEvent.start < existingEvent.end && newEvent.end > existingEvent.start;
+});
 }
 
 function formatEventTime(event, isEndTime = false) {
-    const date = isEndTime ? event.end : event.start;
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+const date = isEndTime ? event.end : event.start;
+return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-// Helper function to round time to nearest 15 minutes
-function roundToNearestQuarter(date) {
-    const minutes = 15;
-    const ms = 1000 * 60 * minutes;
-    return new Date(Math.round(date.getTime() / ms) * ms);
+// Initialize section tabs
+document.querySelectorAll('.section-tab').forEach(tab => {
+tab.addEventListener('click', function() {
+document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+this.classList.add('active');
+document.querySelectorAll('.section-content').forEach(content => content.classList.remove('active'));
+document.getElementById(this.dataset.section).classList.add('active');
+
+// Trigger window resize to fix any FullCalendar rendering issues
+window.dispatchEvent(new Event('resize'));
+});
+});
+
+// Handle accept and reject buttons
+appointmentItems.addEventListener('click', function(e) {
+if (e.target.classList.contains('accept-button')) {
+acceptAppointment(e.target.dataset.id);
+} else if (e.target.classList.contains('reject-button')) {
+rejectAppointment(e.target.dataset.id);
 }
-
-// Modify the showEventModal function
-function showEventModal(info) {
-    const startInput = document.getElementById('event-start');
-    const endInput = document.getElementById('event-end');
-
-    // Round the start and end times to the nearest 15 minutes
-    const roundedStart = roundToNearestQuarter(info.start);
-    const roundedEnd = roundToNearestQuarter(info.end);
-
-    startInput.value = roundedStart.toISOString().slice(0, 16);
-    endInput.value = roundedEnd.toISOString().slice(0, 16);
-
-    modal.style.display = 'block';
-}
+});
 
 // Add event listeners for start and end time inputs
 document.getElementById('event-start').addEventListener('change', function() {
-    const startTime = new Date(this.value);
-    const endTime = new Date(document.getElementById('event-end').value);
+const startTime = new Date(this.value);
+const endTime = new Date(document.getElementById('event-end').value);
 
-    if (startTime >= endTime) {
-        const newEndTime = new Date(startTime.getTime() + 30 * 60000); // 30 minutes later
-        document.getElementById('event-end').value = newEndTime.toISOString().slice(0, 16);
-    }
+if (startTime >= endTime) {
+   const newEndTime = new Date(startTime.getTime() + 30 * 60000); // 30 minutes later
+document.getElementById('event-end').value = newEndTime.toISOString().slice(0, 16);
+}
 });
 
 document.getElementById('event-end').addEventListener('change', function() {
-    const startTime = new Date(document.getElementById('event-start').value);
-    const endTime = new Date(this.value);
+const startTime = new Date(document.getElementById('event-start').value);
+const endTime = new Date(this.value);
 
-    if (endTime <= startTime) {
-        const newStartTime = new Date(endTime.getTime() - 30 * 60000); // 30 minutes earlier
-        document.getElementById('event-start').value = newStartTime.toISOString().slice(0, 16);
-    }
+if (endTime <= startTime) {
+const newStartTime = new Date(endTime.getTime() - 30 * 60000); // 30 minutes earlier
+document.getElementById('event-start').value = newStartTime.toISOString().slice(0, 16);
+}
 });
 
 // Initialize tooltips for events
 tippy('[data-tippy-content]', {
-    theme: 'custom',
-    allowHTML: true
+theme: 'custom',
+allowHTML: true
 });
 
+// Start the application
+setTimeout(() => {
+loadingOverlay.style.display = 'none';
+initializeCalendars();
+initializeChart();
+loadEventsFromLocalStorage();
+updateStats();
+setInterval(removeExpiredEvents, 60000); // Check every minute
+}, 1500);
+
+function addEventToCalendar(event) {
+const expiryTime = new Date().getTime() + 30 * 60000; // 30 minutes from now
+const eventWithExpiry = { ...event, expiryTime };
+localStorage.setItem(`event_${event.id}`, JSON.stringify(eventWithExpiry));
+calendar.addEvent(event);
+miniCalendar.addEvent(event);
+}
+
+function loadEventsFromLocalStorage() {
+for (let i = 0; i < localStorage.length; i++) {
+const key = localStorage.key(i);
+if (key.startsWith('event_')) {
+const eventWithExpiry = JSON.parse(localStorage.getItem(key));
+const now = new Date().getTime();
+if (eventWithExpiry.expiryTime > now) {
+calendar.addEvent(eventWithExpiry);
+miniCalendar.addEvent(eventWithExpiry);
+} else {
+localStorage.removeItem(key);
+}
+}
+}
+}
+
+function removeExpiredEvents() {
+for (let i = 0; i < localStorage.length; i++) {
+const key = localStorage.key(i);
+if (key.startsWith('event_')) {
+const eventWithExpiry = JSON.parse(localStorage.getItem(key));
+const now = new Date().getTime();
+if (eventWithExpiry.expiryTime <= now) {
+localStorage.removeItem(key);
+const event = calendar.getEventById(eventWithExpiry.id);
+if (event) {
+event.remove();
+}
+}
+}
+}
+}
 });
 </script>
 </body>

@@ -17,6 +17,10 @@ urlpatterns = [
     path('booking_status', views.booking_status, name='booking_status'),
     path('advocate_schedule/', views.advocate_schedule, name='advocate_schedule'),
     path('update_booking_status/', views.update_booking_status, name='update_booking_status'),
+    path('client_cases/', views.client_cases, name='client_cases'),
+    path('profile/', views.user_profile, name='user_profile'),
+    path('admfeed/', views.admfeed, name='admfeed'),
+    path('user_com/', views.user_com, name='user_com'),
 
     # Case management URLs
     path('add_case/', views.add_case, name='add_case'),
@@ -25,4 +29,18 @@ urlpatterns = [
     path('delete_case/<int:case_id>/', views.delete_case, name='delete_case'),
     path('advocate/<int:advocate_id>/cases/', views.advocate_cases, name='advocate_cases'),
     path('case/<int:case_id>/manage/', views.manage_case, name='manage_case'),
+
+    # Notification URLs
+    path('send_notification/<int:case_id>/', views.send_notification, name='send_notification'),
+    path('get_notifications/', views.get_notifications, name='get_notifications'),
+
+    # Client Notification URL
+    path('user/client_notification/', views.client_notification, name='client_notification'),
+
+    # New URLs
+    path('get_complaint_details/<int:complaint_id>/', views.get_complaint_details, name='get_complaint_details'),
+    path('admin_reply/', views.admin_reply, name='admin_reply'),
+
+    # Block/Unblock Advocate URL
+    path('block_unblock_advocate/<int:advocate_id>/', views.block_unblock_advocate, name='block_unblock_advocate'),
 ]

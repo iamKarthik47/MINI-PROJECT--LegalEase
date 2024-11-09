@@ -219,7 +219,7 @@
         <div class="main-content">
             <div class="profile">
                 <div class="profile-pic">MU</div>
-                <div class="profile-name">Mukundan Unni</div>
+                <div class="profile-name">Advocate</div>
             </div>
             <div class="quick-stats">
                 <div class="stat-item">
@@ -227,8 +227,8 @@
                     <div>Active Cases</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">98%</div>
-                    <div>Success Rate</div>
+                    <div class="stat-value"></div>
+                    <div></div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">7</div>
@@ -248,28 +248,16 @@
                         <div class="module-title">Schedule</div>
                     </div>
                 </div>
-                <div class="module">
+                <div class="module" id="profile-module">
                     <div class="module-content">
-                        <i class="fas fa-file-alt module-icon"></i>
-                        <div class="module-title">Documents</div>
+                        <i class="fas fa-user module-icon"></i>
+                        <div class="module-title">Profile</div>
                     </div>
                 </div>
-                <div class="module">
+                <div class="module" id="logout-module">
                     <div class="module-content">
-                        <i class="fas fa-users module-icon"></i>
-                        <div class="module-title">Clients</div>
-                    </div>
-                </div>
-                <div class="module">
-                    <div class="module-content">
-                        <i class="fas fa-chart-line module-icon"></i>
-                        <div class="module-title">Analytics</div>
-                    </div>
-                </div>
-                <div class="module">
-                    <div class="module-content">
-                        <i class="fas fa-cog module-icon"></i>
-                        <div class="module-title">Settings</div>
+                        <i class="fas fa-sign-out-alt module-icon"></i>
+                        <div class="module-title">Logout</div>
                     </div>
                 </div>
             </div>
@@ -292,6 +280,16 @@
                 } else {
                     alert('Advocate ID not found in session. Please log in again.');
                 }
+            });
+
+            const profileModule = document.getElementById('profile-module');
+            profileModule.addEventListener('click', function() {
+                window.location.href = '/profile/';
+            });
+
+            const logoutModule = document.getElementById('logout-module');
+            logoutModule.addEventListener('click', function() {
+                window.location.href = '/logout/';
             });
         });
     </script>

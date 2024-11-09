@@ -303,6 +303,24 @@
             }
         }
 
+        /* Notification Box Styles */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -312,8 +330,8 @@
 
     <div class="container">
         <div class="search-bar">
-            <input type="text" placeholder="Search cases by number, client name, or type...">
-            <button><i class="fas fa-search"></i> Search</button>
+            <input type="text" id="searchInput" placeholder="Search cases by number, client name, or type...">
+            <button id="searchButton"><i class="fas fa-search"></i> Search</button>
         </div>
 
         <div class="case-list">
@@ -327,7 +345,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="caseTableBody">
                     {% for case in cases %}
                     <tr>
                         <td>{{ case.case_number }}</td>
@@ -337,7 +355,7 @@
                         <td>
                             <button class="action-btn view-btn" data-case="{{ case.id }}"><i class="fas fa-eye"></i></button>
                             <button class="action-btn edit-btn" data-case="{{ case.id }}"><i class="fas fa-edit"></i></button>
-                                                        <button class="action-btn delete-btn" data-case="{{ case.id }}"><i class="fas fa-trash"></i></button>
+                            <button class="action-btn delete-btn" data-case="{{ case.id }}"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -412,7 +430,7 @@
                         <textarea id="evidenceList" name="evidenceList"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="witnessInformation">Witness Information</label>
+                                                <label for="witnessInformation">Witness Information</label>
                         <textarea id="witnessInformation" name="witnessInformation"></textarea>
                     </div>
                     <div class="form-group">
@@ -445,16 +463,6 @@
             </div>
         </div>
 
-        <div id="viewCaseModal" class="modal view-modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>View Case Details</h2>
-                <table id="viewCaseTable">
-                    <!-- Case details will be populated here -->
-                </table>
-            </div>
-        </div>
-
         <div id="editCaseModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -463,7 +471,8 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="editCaseNumber">Case Number</label>
-                        <input type="text" id="editCaseNumber" name="editCaseNumber" readonly>
+                        <input type="text" id="editCaseNumber" name="editCaseNumber" required pattern="C\d{3}" title="Case number must be in the format C001, C002, etc.">
+                        <span class="error" id="editCaseNumberError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editClientName">Client Name</label>
@@ -551,10 +560,23 @@
                 </form>
             </div>
         </div>
+
+        <div id="viewCaseModal" class="modal view-modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>View Case Details</h2>
+                <table id="viewCaseTable">
+                    <!-- Case details will be populated here -->
+                </table>
+            </div>
+        </div>
+
+        <!-- Notification Box -->
+        <div id="notification" class="notification"></div>
     </div>
 
     <script>
-        // Modal functionality
+        // Modal setup for Add, View, and Edit cases
         function setupModal(modalId, btnId) {
             var modal = document.getElementById(modalId);
             var btn = document.getElementById(btnId);
@@ -577,48 +599,74 @@
             }
         }
 
+        // Setup modals for Add, View, and Edit buttons
         setupModal("addCaseModal", "addCaseBtn");
         setupModal("viewCaseModal", "viewCaseBtn");
         setupModal("editCaseModal", "editCaseBtn");
 
-        // Form validation
+        // Add Case form validation and submit handling
         document.getElementById("addCaseForm").addEventListener("submit", function(e) {
             e.preventDefault();
-            if (validateForm()) {
+            if (validateForm("addCaseForm")) {
                 addCase();
             }
         });
 
-        function validateForm() {
+        // Edit Case form validation and submit handling
+        document.getElementById("editCaseForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            if (validateForm("editCaseForm")) {
+                editCase();
+            }
+        });
+
+        // Validation function for Add and Edit Case forms
+        function validateForm(formId) {
             var isValid = true;
-            var fields = ["caseNumber", "clientName", "caseType", "filingDate", "courtName", "caseStatus", "caseDescription", "user", "advocate"];
+            var form = document.getElementById(formId);
+            var fields = form.querySelectorAll(".form-group input, .form-group select, .form-group textarea");
 
             fields.forEach(function(field) {
-                var element = document.getElementById(field);
-                var errorElement = document.getElementById(field + "Error");
+                var errorElementId = field.id + "Error";
+                var errorElement = document.getElementById(errorElementId);
 
-                if (!element.checkValidity()) {
+                if (!field.checkValidity()) {
                     isValid = false;
-                    errorElement.textContent = element.validationMessage;
+                    if (errorElement) {
+                        errorElement.textContent = field.validationMessage;
+                    } else {
+                        console.error(`Element with ID ${errorElementId} not found.`);
+                    }
                 } else {
-                    errorElement.textContent = "";
+                    if (errorElement) {
+                        errorElement.textContent = "";
+                    }
                 }
             });
 
-            // Additional custom validations
-            var filingDate = new Date(document.getElementById("filingDate").value);
-            var nextHearingDate = new Date(document.getElementById("nextHearingDate").value);
+            var filingDate = new Date(document.getElementById(formId === "addCaseForm" ? "filingDate" : "editFilingDate").value);
+            var nextHearingDate = new Date(document.getElementById(formId === "addCaseForm" ? "nextHearingDate" : "editNextHearingDate").value);
+
+            var nextHearingDateErrorId = formId === "addCaseForm" ? "nextHearingDateError" : "editNextHearingDateError";
+            var nextHearingDateErrorElement = document.getElementById(nextHearingDateErrorId);
 
             if (nextHearingDate < filingDate) {
                 isValid = false;
-                document.getElementById("nextHearingDateError").textContent = "Next hearing date cannot be earlier than the filing date.";
+                if (nextHearingDateErrorElement) {
+                    nextHearingDateErrorElement.textContent = "Next hearing date cannot be earlier than the filing date.";
+                } else {
+                    console.error(`Element with ID ${nextHearingDateErrorId} not found.`);
+                }
             } else {
-                document.getElementById("nextHearingDateError").textContent = "";
+                if (nextHearingDateErrorElement) {
+                    nextHearingDateErrorElement.textContent = "";
+                }
             }
 
             return isValid;
         }
 
+        // Add Case functionality
         function addCase() {
             var form = document.getElementById("addCaseForm");
             var formData = new FormData(form);
@@ -633,17 +681,43 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    alert("Case added successfully!");
+                    showNotification("Case added successfully!");
                     form.reset();
                     document.getElementById("addCaseModal").style.display = "none";
                     location.reload();
                 } else {
-                    alert("Error adding case.");
+                    showNotification("Error adding case.");
                 }
             });
         }
 
-        // View case functionality
+        // Edit Case functionality
+        function editCase() {
+            var form = document.getElementById("editCaseForm");
+            var formData = new FormData(form);
+            var caseId = form.getAttribute("data-case-id");
+
+            fetch(`/edit_case/${caseId}/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showNotification("Case updated successfully!");
+                    form.reset();
+                    document.getElementById("editCaseModal").style.display = "none";
+                    location.reload();
+                } else {
+                    showNotification("Error updating case.");
+                }
+            });
+        }
+
+        // View Case functionality
         document.querySelectorAll('.view-btn').forEach(button => {
             button.addEventListener('click', function() {
                 var caseId = this.getAttribute('data-case');
@@ -651,8 +725,9 @@
             });
         });
 
+        // Fetch and show case details in View modal
         function viewCase(caseId) {
-            fetch(`{% url 'view_case' 0 %}`.replace('0', caseId))
+            fetch(`/view_case/${caseId}/`)
             .then(response => response.json())
             .then(data => {
                 var table = document.getElementById("viewCaseTable");
@@ -670,64 +745,34 @@
             });
         }
 
-        // Edit case functionality
+        // Edit Case functionality
         document.querySelectorAll('.edit-btn').forEach(button => {
             button.addEventListener('click', function() {
                 var caseId = this.getAttribute('data-case');
-                editCase(caseId);
+                fetchCaseDetails(caseId);
             });
         });
 
-        function editCase(caseId) {
-            fetch(`{% url 'view_case' 0 %}`.replace('0', caseId))
+        // Fetch and populate case details in Edit modal
+        function fetchCaseDetails(caseId) {
+            fetch(`/view_case/${caseId}/`)
             .then(response => response.json())
             .then(data => {
                 var form = document.getElementById("editCaseForm");
+                form.setAttribute("data-case-id", caseId);
 
                 for (var key in data) {
-                    var input = form.querySelector("#edit" + key.charAt(0).toUpperCase() + key.slice(1));
+                    var input = form.querySelector(`#edit${key.charAt(0).toUpperCase() + key.slice(1)}`);
                     if (input) {
                         input.value = data[key];
                     }
                 }
 
-                // Set the selected user and advocate
-                var userSelect = document.getElementById("editUser");
-                var advocateSelect = document.getElementById("editAdvocate");
-                userSelect.value = data.user;
-                advocateSelect.value = data.advocate;
-
                 document.getElementById("editCaseModal").style.display = "block";
             });
         }
 
-        document.getElementById("editCaseForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-            var form = document.getElementById("editCaseForm");
-            var formData = new FormData(form);
-            var caseId = form.querySelector("#editCaseNumber").value;
-
-            fetch(`{% url 'edit_case' 0 %}`.replace('0', caseId), {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                                        alert("Case updated successfully!");
-                    form.reset();
-                    document.getElementById("editCaseModal").style.display = "none";
-                    location.reload();
-                } else {
-                    alert("Error updating case.");
-                }
-            });
-        });
-
-        // Delete case functionality
+        // Delete Case functionality
         document.querySelectorAll('.delete-btn').forEach(button => {
             button.addEventListener('click', function() {
                 var caseId = this.getAttribute('data-case');
@@ -735,9 +780,10 @@
             });
         });
 
+        // Delete case and confirm action
         function deleteCase(caseId) {
             if (confirm("Are you sure you want to delete case " + caseId + "?")) {
-                fetch(`{% url 'delete_case' 0 %}`.replace('0', caseId), {
+                fetch(`/delete_case/${caseId}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': '{{ csrf_token }}'
@@ -746,14 +792,51 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        alert("Case deleted successfully!");
+                        showNotification("Case deleted successfully!");
                         location.reload();
                     } else {
-                        alert("Error deleting case.");
+                        showNotification("Error deleting case.");
                     }
                 });
             }
         }
+
+        // Show notification
+        function showNotification(message) {
+            var notification = document.getElementById("notification");
+            notification.textContent = message;
+            notification.classList.add("show");
+            setTimeout(function() {
+                notification.classList.remove("show");
+            }, 3000);
+        }
+
+        // Search functionality
+        document.getElementById("searchButton").addEventListener("click", function() {
+            var searchQuery = document.getElementById("searchInput").value.toLowerCase();
+            var tableBody = document.getElementById("caseTableBody");
+            var rows = tableBody.getElementsByTagName("tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var cells = row.getElementsByTagName("td");
+                var match = false;
+
+                for (var j = 0; j < cells.length; j++) {
+                    var cell = cells[j];
+                    if (cell.textContent.toLowerCase().indexOf(searchQuery) > -1) {
+                        match = true;
+                        break;
+                    }
+                }
+
+                if (match) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+        });
     </script>
 </body>
 </html>

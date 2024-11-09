@@ -306,24 +306,23 @@
                     <h3>Booking Status</h3>
                     <p>Track your appointment schedules</p>
                 </a>
-                <div class="sidebar-item">
+                <a href="{% url 'client_cases' %}" class="sidebar-item">  <!-- Update this line -->
                     <h3>Case Details</h3>
                     <p>Access information about your ongoing legal matters</p>
-                </div>
-                <div class="sidebar-item">
-                    <h3>Chat</h3>
-                    <p>Communicate securely with your advocate</p>
-                    <span class="notification-badge">3</span>
-                </div>
-                <div class="sidebar-item">
+                </a>
+                <a href="{% url 'client_notification' %}" class="sidebar-item" id="notifications-item">
                     <h3>Notifications</h3>
                     <p>Stay updated on important case developments</p>
-                    <span class="notification-badge">5</span>
-                </div>
-                <div class="sidebar-item">
+                    <span class="notification-badge" id="notification-badge">0</span>
+                </a>
+                <a href="{% url 'user_profile' %}" class="sidebar-item">  <!-- Update this line -->
                     <h3>Profile</h3>
                     <p>Manage your account settings and information</p>
-                </div>
+                </a>
+                <a href="{% url 'user_com' %}" class="sidebar-item">  <!-- New section for Complaints -->
+                    <h3>Complaints</h3>
+                    <p>Submit and view your complaints and feedback</p>
+                </a>
                 <div class="sidebar-item">
                     <h3>Logout</h3>
                     <p>Securely sign out of your account</p>
@@ -331,5 +330,29 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Function to fetch unread notification count
+        async function fetchUnreadNotifications() {
+            try {
+                const response = await fetch('/get_notifications/');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.status === 'success') {
+                    const unreadCount = data.notifications.filter(notification => !notification.is_read).length;
+                    document.getElementById('notification-badge').textContent = unreadCount;
+                } else {
+                    console.error('Error fetching notifications:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        }
+
+        // Fetch unread notifications on page load
+        document.addEventListener('DOMContentLoaded', fetchUnreadNotifications);
+    </script>
 </body>
 </html>

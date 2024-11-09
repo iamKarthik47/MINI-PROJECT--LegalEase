@@ -98,3 +98,33 @@ class Evidence(models.Model):
 
     def __str__(self):
         return f"Evidence for Case {self.case.case_number}"
+
+class CaseNotification(models.Model):
+    sender = models.ForeignKey(User, related_name='sent_notifications', on_delete=models.CASCADE)
+    sender_advocate = models.ForeignKey(Advocates, related_name='sent_notifications_advocate', on_delete=models.CASCADE,
+                                        null=True, blank=True)
+    recipient = models.ForeignKey(User, related_name='received_notifications', on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification from {self.sender.username} to {self.recipient.username}"
+
+class ComplaintFeedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(max_length=10, choices=[('complaint', 'Complaint'), ('feedback', 'Feedback')])
+    message = models.TextField()
+    admin_reply = models.TextField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, default='Pending', choices=[('Pending', 'Pending'), ('Replied', 'Replied')])
+
+    def __str__(self):
+        return f"{self.type} by {self.user.username}"
+
+class AdvocateStatus(models.Model):
+    advocate = models.OneToOneField(Advocates, on_delete=models.CASCADE, primary_key=True)
+    status = models.CharField(max_length=10, default='Active')
+
+    def __str__(self):
+        return f"{self.advocate.name} - {self.status}"

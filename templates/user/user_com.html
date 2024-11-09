@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextGen Feedback Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C5CE7;
+            --secondary-color: #00CEC9;
+            --background-color: #0F0F1E;
+            --text-color: #FFFFFF;
+            --card-background: #1E1E30;
+            --accent-color: #FD79A8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--secondary-color);
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h2::before, h2::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--secondary-color), transparent);
+            animation: glow 2s linear infinite;
+        }
+
+        h2::before {
+            top: 0;
+            left: -100%;
+        }
+
+        h2::after {
+            bottom: 0;
+            right: -100%;
+        }
+
+        @keyframes glow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .complaint-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .complaint-item {
+            background-color: var(--card-background);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .complaint-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .complaint-item:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .complaint-item:hover::before {
+            opacity: 0.1;
+        }
+
+        .complaint-item p {
+            margin-bottom: 0.8rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .complaint-item strong {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .btn-add {
+            display: block;
+            width: 200px;
+            margin: 0 auto 2rem;
+            padding: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-add::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .btn-add:hover::before {
+            left: 100%;
+        }
+
+        .btn-add:hover {
+            box-shadow: 0 0 20px var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .pagination li {
+            margin: 0 0.5rem;
+        }
+
+        .pagination a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pagination a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        .pagination a:hover::before {
+            left: 100%;
+        }
+
+        .pagination a:hover {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 50%;
+            max-width: 500px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-50px) scale(0.9);}
+            to {opacity: 1; transform: translateY(0) scale(1);}
+        }
+
+        .close {
+            color: var(--text-color);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--accent-color);
+            transform: rotate(90deg);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        select, textarea {
+            margin-top: 0.5rem;
+            padding: 0.8rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button[type="submit"] {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button[type="submit"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+
+        button[type="submit"]:hover::before {
+            left: 100%;
+        }
+
+        button[type="submit"]:hover {
+            box-shadow: 0 0 20px var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .complaint-list {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2><i class="fas fa-comments"></i>  Feedback Hub</h2>
+
+    <div class="complaint-list">
+        {% for complaint in page_obj %}
+        <div class="complaint-item">
+            <p><strong><i class="fas fa-tag"></i> Type:</strong> {{ complaint.type }}</p>
+            <p><strong><i class="fas fa-comment"></i> Message:</strong> {{ complaint.message }}</p>
+            <p><strong><i class="fas fa-reply"></i> Reply:</strong> {{ complaint.admin_reply|default:"Pending..." }}</p>
+            <p><strong><i class="fas fa-info-circle"></i> Status:</strong> {{ complaint.status }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li><a href="?page=1"><i class="fas fa-angle-double-left"></i> First</a></li>
+                <li><a href="?page={{ page_obj.previous_page_number }}"><i class="fas fa-angle-left"></i> Previous</a></li>
+            {% endif %}
+
+            <li><span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+
+            {% if page_obj.has_next %}
+                <li><a href="?page={{ page_obj.next_page_number }}">Next <i class="fas fa-angle-right"></i></a></li>
+                <li><a href="?page={{ page_obj.paginator.num_pages }}">Last <i class="fas fa-angle-double-right"></i></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <button class="btn-add" onclick="openModal()"><i class="fas fa-plus"></i> Add Feedback</button>
+
+    <div id="complaintModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Submit Your Feedback</h3>
+            <form method="post" id="complaintForm">
+                {% csrf_token %}
+                <label for="type">Type:</label>
+                <select id="type" name="type" required>
+                    <option value="complaint">Complaint</option>
+                    <option value="feedback">Feedback</option>
+                </select>
+                <label for="message">Your Message:</label>
+                <textarea id="message" name="message" rows="4" placeholder="Share your thoughts..." required></textarea>
+                <button type="submit">Send <i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function openModal() {
+        document.getElementById('complaintModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('complaintModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('complaintModal')) {
+            closeModal();
+        }
+    }
+
+    $(document).ready(function() {
+        $('#complaintForm').on('submit', function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{% url 'user_com' %}",
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    closeModal();
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

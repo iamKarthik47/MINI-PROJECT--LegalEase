@@ -182,13 +182,9 @@
                 <i class="fas fa-users"></i>
                 <span>Clients</span>
             </a>
-            <a href="#" class="nav-link" data-page="documents">
-                <i class="fas fa-file-alt"></i>
-                <span>Documents</span>
-            </a>
-            <a href="#" class="nav-link" data-page="settings">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
+            <a href="{% url 'admfeed' %}" class="nav-link" data-page="complaints">  <!-- New section for Complaints or Feedback -->
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Complaints or Feedback</span>
             </a>
         </div>
 
@@ -207,25 +203,29 @@
         </div>
     </div>
 
+    <!-- Embed case data as JSON -->
+    {{ case_data|json_script:"case-data" }}
+
     <script>
         function showDashboard() {
+            const caseData = JSON.parse(document.getElementById('case-data').textContent);
             document.getElementById('content').innerHTML = `
                 <div class="dashboard-grid">
                     <div class="dashboard-card">
                         <h3>Total Cases</h3>
-                        <div class="dashboard-stat">152</div>
+                        <div class="dashboard-stat">${caseData.active_cases + caseData.pending_cases + caseData.closed_cases}</div>
                     </div>
                     <div class="dashboard-card">
                         <h3>Active Cases</h3>
-                        <div class="dashboard-stat">87</div>
+                        <div class="dashboard-stat">${caseData.active_cases}</div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Pending Cases</h3>
+                        <div class="dashboard-stat">${caseData.pending_cases}</div>
                     </div>
                     <div class="dashboard-card">
                         <h3>Closed Cases</h3>
-                        <div class="dashboard-stat">65</div>
-                    </div>
-                    <div class="dashboard-card">
-                        <h3>Upcoming Hearings</h3>
-                        <div class="dashboard-stat">12</div>
+                        <div class="dashboard-stat">${caseData.closed_cases}</div>
                     </div>
                 </div>
                 <div class="dashboard-card">
@@ -237,7 +237,7 @@
             `;
             document.getElementById('pageTitle').textContent = 'Dashboard';
             updateSidebarActiveLink('Dashboard');
-            renderDashboard();
+            renderDashboard(caseData);
         }
 
         function showCalendar() {
@@ -274,14 +274,14 @@
             });
         }
 
-        function renderDashboard() {
+        function renderDashboard(caseData) {
             const ctx = document.getElementById('caseStatusChart').getContext('2d');
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Active', 'Pending', 'Closed'],
                     datasets: [{
-                        data: [87, 35, 30],
+                        data: [caseData.active_cases, caseData.pending_cases, caseData.closed_cases],
                         backgroundColor: ['#4caf50', '#ff9800', '#9e9e9e']
                     }]
                 },
@@ -346,6 +346,10 @@
                         case 'cases':
                         case 'advocates':
                             // Handle both cases and advocates page navigation
+                            window.location.href = this.getAttribute('href');
+                            break;
+                        case 'complaints':
+                            // Handle complaints or feedback page navigation
                             window.location.href = this.getAttribute('href');
                             break;
                         default:

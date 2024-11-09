@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advocate Command Center - VIP Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --primary-color: #4f46e5;
+            --secondary-color: #818cf8;
+            --accent-color: #f59e0b;
+            --text-color: #e2e8f0;
+            --light-text: #94a3b8;
+            --white: #ffffff;
+            --card-bg: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .complaint-list {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .complaint-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .complaint-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .complaint-item p {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .complaint-item strong {
+            color: var(--secondary-color);
+            font-weight: 700;
+        }
+
+        .main-content {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-view h2 {
+            color: var(--white);
+            margin-bottom: 25px;
+            font-size: 2rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--secondary-color);
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--accent-color);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background-color: #e3a008;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin-top: 25px;
+        }
+
+        .page-item {
+            margin: 0 5px;
+        }
+
+        .page-link {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .page-link:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        #complaint-details {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        #complaint-details p {
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-new { background-color: #10b981; }
+        .status-in-progress { background-color: #f59e0b; }
+        .status-resolved { background-color: #3b82f6; }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: var(--light-text);
+        }
+
+        .empty-state p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Advocate Command Center</h1>
+        </header>
+
+        <aside class="sidebar">
+            <div class="complaint-list">
+                {% for complaint in page_obj %}
+                <div class="complaint-item" data-id="{{ complaint.id }}">
+                    <p><strong>Type:</strong> {{ complaint.type }}</p>
+                    <p><strong>From:</strong> {{ complaint.user.get_full_name }}</p>
+                    <p>
+                        <span class="status-indicator status-{{ complaint.status|lower }}"></span>
+                        <strong>Status:</strong> {{ complaint.status }}
+                    </p>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <p>No complaints to display at this time.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+
+                    <li class="page-item disabled"><a class="page-link" href="#">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="admin-view" id="admin-view">
+                <h2>Message Details</h2>
+                <div id="complaint-details">
+                    <!-- Dynamic details will be injected here -->
+                </div>
+
+                <form id="replyForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="replyMessage">Advocate's Response:</label>
+                        <textarea class="form-control" id="replyMessage" name="reply_message" rows="4" placeholder="Compose your professional response here..." required></textarea>
+                    </div>
+                    <input type="hidden" id="complaintId" name="complaint_id">
+                    <button type="submit" class="btn">Submit Response</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.complaint-item').on('click', function () {
+                var complaintId = $(this).data('id');
+                $('#complaintId').val(complaintId);
+
+                $.ajax({
+                    url: '/get_complaint_details/' + complaintId + '/',
+                    method: 'GET',
+                    success: function (data) {
+                        $('#complaint-details').html(`
+                            <p><strong>Type:</strong> ${data.type}</p>
+                            <p><strong>From Client:</strong> ${data.user_name}</p>
+                            <p><strong>Message:</strong> ${data.message}</p>
+                            <p><strong>Advocate's Response:</strong> ${data.admin_reply || 'No response submitted yet.'}</p>
+                            <p><strong>Status:</strong> ${data.status}</p>
+                        `);
+                        $('#admin-view').show();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error retrieving case details. Please try again.');
+                    }
+                });
+            });
+
+            $('#replyForm').on('submit', function (e) {
+                e.preventDefault();
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: '/admin_reply/',
+                    method: 'POST',
+                    data: formData,
+                    success: function (data) {
+                        if (data.status === 'success') {
+                            alert("Response submitted successfully.");
+                            location.reload();
+                        } else {
+                            alert("An error occurred. Please try again.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error submitting response. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

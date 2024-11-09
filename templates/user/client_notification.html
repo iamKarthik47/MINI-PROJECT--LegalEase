@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Notifications Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --primary-dark: #0A1128;
+            --primary-light: #1E293B;
+            --accent-primary: #3B82F6;
+            --accent-secondary: #6366F1;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1E293B, #0A1128);
+            min-height: 100vh;
+            color: #E2E8F0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 0 32px rgba(148, 163, 184, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow:
+                0 12px 40px rgba(59, 130, 246, 0.2),
+                inset 0 0 32px rgba(148, 163, 184, 0.1);
+        }
+
+        .notification-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .notification-item:hover::before {
+            opacity: 1;
+        }
+
+        .btn-modern {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-modern::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-modern:hover::after {
+            left: 100%;
+        }
+
+        .status-badge {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .notification-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 320px;
+            z-index: 9999;
+        }
+
+        .notification {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            transform: translateX(150%);
+        }
+
+        .notification-icon {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 16px;
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .notification-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 100%;
+            transform-origin: left;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            z-index: 1000;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #60A5FA, #818CF8, #60A5FA);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: rgba(15, 23, 42, 0.95);
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            width: 80%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <div class="container mx-auto px-4 py-12">
+        <!-- Enhanced Header Section -->
+        <div class="text-center mb-16 float-animation">
+            <h1 class="text-6xl font-bold mb-6 gradient-text">
+                Notification Hub
+            </h1>
+            <p class="text-xl text-blue-200 opacity-80">Stay updated with your latest notifications</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="glass-card p-8 mb-8">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
+                    Your Notifications
+                </h3>
+                <button onclick="getNotifications()" class="btn-modern">
+                    <i class="fas fa-sync-alt mr-2"></i>Refresh
+                </button>
+            </div>
+
+            <!-- Enhanced Notification List -->
+            <div id="notification-list" class="space-y-4">
+                <!-- Notifications will be populated here -->
+            </div>
+
+            <!-- Enhanced Pagination -->
+            <div id="pagination" class="flex justify-center mt-8 gap-4">
+                <button id="prev-page" class="btn-modern" onclick="changePage(-1)">
+                    <i class="fas fa-chevron-left mr-2"></i>Previous
+                </button>
+                <button id="next-page" class="btn-modern" onclick="changePage(1)">
+                    Next<i class="fas fa-chevron-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <!-- Modal for Notification Details -->
+    <div id="notification-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title" class="text-2xl font-bold mb-4"></h2>
+            <p id="modal-message" class="mb-4"></p>
+            <button id="modal-close" class="btn-modern">Close</button>
+        </div>
+    </div>
+
+    <!-- CSRF Token -->
+    <form id="csrf-form">
+        {% csrf_token %}
+    </form>
+
+    <script>
+        // Initialize GSAP
+        gsap.registerPlugin(ScrollTrigger);
+
+        let currentPage = 1;
+        let totalPages = 1;
+        let notificationsCache = [];
+        let isFetching = false;
+
+        const notificationContainer = document.getElementById('notification-container');
+        const modal = document.getElementById('notification-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalClose = document.getElementById('modal-close');
+
+        function showNotification(title, message, type = 'success', duration = 5000) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+
+            const iconClass = type === 'success' ? 'fa-check' : 'fa-exclamation';
+            const iconColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+
+            notification.innerHTML = `
+                <div class="notification-icon ${iconColor}">
+                    <i class="fas ${iconClass}"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title text-white">${title}</div>
+                    <div class="notification-message text-gray-300">${message}</div>
+                </div>
+                <div class="notification-progress ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}"></div>
+            `;
+
+            notificationContainer.appendChild(notification);
+
+            gsap.to(notification, {
+                x: 0,
+                duration: 0.5,
+                ease: "back.out(1.7)"
+            });
+
+            gsap.to(notification.querySelector('.notification-progress'), {
+                scaleX: 0,
+                duration: duration / 1000,
+                ease: "none"
+            });
+
+            setTimeout(() => {
+                gsap.to(notification, {
+                    x: '150%',
+                    opacity: 0,
+                    duration: 0.5,
+                    ease: "power2.in",
+                    onComplete: () => {
+                        notificationContainer.removeChild(notification);
+                    }
+                });
+            }, duration);
+        }
+
+        async function markAsRead(notificationId, notificationElement) {
+            try {
+                const response = await fetch(`/mark_notification_as_read/${notificationId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                });
+
+                if (response.ok) {
+                    const statusBadge = notificationElement.querySelector('.status-badge');
+                    statusBadge.innerHTML = '<i class="fas fa-check"></i> Read';
+                    statusBadge.classList.remove('bg-blue-100/10', 'text-blue-400');
+                    statusBadge.classList.add('bg-green-100/10', 'text-green-400');
+                } else {
+                    console.error('Failed to mark notification as read');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function showNotificationDetails(notification) {
+            modalTitle.textContent = notification.querySelector('.font-semibold').textContent;
+            modalMessage.textContent = notification.querySelector('.mt-3').textContent;
+            modal.style.display = "block";
+
+            gsap.from(modal.querySelector('.modal-content'), {
+                y: -50,
+                opacity: 0,
+                duration: 0.5,
+                ease: "power3.out"
+            });
+        }
+
+        function createNotificationElement(notification) {
+            const notificationItem = document.createElement('div');
+            notificationItem.className = 'glass-card notification-item p-6 cursor-pointer';
+            notificationItem.setAttribute('data-id', notification.id);
+            notificationItem.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                                                <p class="font-semibold text-blue-400 mb-1">${notification.sender_name}</p>
+                        <p class="text-sm text-gray-400">${notification.timestamp}</p>
+                    </div>
+                    <span class="status-badge ${notification.is_read ? 'bg-green-100/10 text-green-400' : 'bg-blue-100/10 text-blue-400'}">
+                        <i class="fas fa-${notification.is_read ? 'check' : 'envelope'}"></i>
+                        ${notification.is_read ? 'Read' : 'New'}
+                    </span>
+                </div>
+                <p class="mt-3 text-gray-200">${notification.message}</p>
+            `;
+            return notificationItem;
+        }
+
+        async function getNotifications() {
+            if (isFetching) return;
+            isFetching = true;
+
+            try {
+                const response = await fetch(`/get_notifications/?page=${currentPage}`);
+                const data = await response.json();
+
+                const notificationList = document.getElementById('notification-list');
+                notificationList.innerHTML = '';
+                notificationsCache = data.notifications;
+
+                if (data.notifications?.length > 0) {
+                    data.notifications.forEach(notification => {
+                        const notificationItem = createNotificationElement(notification);
+                        notificationList.appendChild(notificationItem);
+                    });
+                } else {
+                    notificationList.innerHTML = `
+                        <div class="text-center py-12">
+                            <i class="fas fa-bell-slash text-5xl mb-4 text-gray-400"></i>
+                            <p class="text-gray-400">No notifications yet</p>
+                        </div>
+                    `;
+                }
+
+                totalPages = data.total_pages || 1;
+                updatePaginationButtons();
+                showNotification('Success', 'Notifications fetched successfully', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error', 'Failed to fetch notifications', 'error');
+            } finally {
+                isFetching = false;
+            }
+        }
+
+        function updatePaginationButtons() {
+            const prevPageButton = document.getElementById('prev-page');
+            const nextPageButton = document.getElementById('next-page');
+
+            if (prevPageButton && nextPageButton) {
+                prevPageButton.disabled = currentPage === 1;
+                nextPageButton.disabled = currentPage === totalPages;
+            }
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            getNotifications();
+        }
+
+        function startNotificationPolling() {
+            setInterval(getNotifications, 10000); // Fetch notifications every 10 seconds
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const notificationList = document.getElementById('notification-list');
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // Event delegation for notification clicks
+            notificationList.addEventListener('click', (event) => {
+                const notificationItem = event.target.closest('.notification-item');
+                if (notificationItem) {
+                    const notificationId = notificationItem.dataset.id;
+                    const statusBadge = notificationItem.querySelector('.status-badge');
+                    const isUnread = statusBadge.classList.contains('bg-blue-100/10');
+
+                    if (isUnread) {
+                        markAsRead(notificationId, notificationItem);
+                    }
+
+                    showNotificationDetails(notificationItem);
+                }
+            });
+
+            // Close modal functionality
+            modalClose.onclick = () => {
+                gsap.to(modal.querySelector('.modal-content'), {
+                    y: -50,
+                    opacity: 0,
+                    duration: 0.5,
+                    ease: "power3.in",
+                    onComplete: () => {
+                        modal.style.display = "none";
+                    }
+                });
+            };
+
+            window.onclick = (event) => {
+                if (event.target == modal) {
+                    modalClose.onclick();
+                }
+            };
+
+            // Attach getNotifications to the refresh button
+            const refreshButton = document.querySelector('.btn-modern');
+            refreshButton.addEventListener('click', getNotifications);
+
+            // Initial load of notifications
+            getNotifications();
+
+            // Start polling for new notifications
+            startNotificationPolling();
+        });
+    </script>
+</body>
+</html>

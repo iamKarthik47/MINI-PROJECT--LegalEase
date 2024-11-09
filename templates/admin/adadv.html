@@ -166,7 +166,8 @@
             color: #00e5ff;
         }
 
-        .view-details-btn {
+        .view-details-btn,
+        .block-unblock-btn {
             margin-top: 1rem;
             padding: 0.5rem 1rem;
             border: none;
@@ -180,13 +181,15 @@
             overflow: hidden;
         }
 
-        .view-details-btn:hover {
+        .view-details-btn:hover,
+        .block-unblock-btn:hover {
             background-color: #00b8d4;
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 229, 255, 0.4);
         }
 
-        .view-details-btn::after {
+        .view-details-btn::after,
+        .block-unblock-btn::after {
             content: '';
             position: absolute;
             top: 50%;
@@ -215,7 +218,8 @@
             }
         }
 
-        .view-details-btn:focus:not(:active)::after {
+        .view-details-btn:focus:not(:active)::after,
+        .block-unblock-btn:focus:not(:active)::after {
             animation: ripple 1s ease-out;
         }
 
@@ -300,6 +304,13 @@
                         <h2 class="advocate-name">{{ advocate.name }}</h2>
                         <p class="advocate-specialization">{{ advocate.specialization }}</p>
                         <button class="view-details-btn">View Details</button>
+                        <button class="block-unblock-btn" data-advocate-id="{{ advocate.id }}" data-status="{{ advocate.status }}">
+                            {% if advocate.status == "Active" %}
+                                Block
+                            {% else %}
+                                Unblock
+                            {% endif %}
+                        </button>
                     </div>
                     <div class="card-back" data-name="{{ advocate.name }}"
                          data-specialization="{{ advocate.specialization }}"
@@ -352,6 +363,37 @@
                             detailsCard.classList.add('show');
                         }, 10);
                     }
+                });
+
+                const blockUnblockBtn = card.querySelector('.block-unblock-btn');
+                blockUnblockBtn.addEventListener('click', function() {
+                    const advocateId = this.dataset.advocateId;
+                    const currentStatus = this.dataset.status;
+                    const newStatus = currentStatus === 'Active' ? 'Blocked' : 'Active';
+
+                    fetch(`/block_unblock_advocate/${advocateId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Response from server:', data); // Debugging statement
+                        if (data.status === 'success') {
+                            this.dataset.status = data.new_status;
+                            this.textContent = data.new_status === 'Active' ? 'Block' : 'Unblock';
+                            back.dataset.status = data.new_status; // Update the status in the back card
+                            console.log('Status updated to:', data.new_status); // Debugging statement
+                        } else {
+                            console.error('Failed to update status:', data); // Debugging statement
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error); // Debugging statement
+                    });
                 });
             });
 
